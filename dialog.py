@@ -1,6 +1,7 @@
 import os
 import threading
 import pythoncom
+import markdown
 import tkinter as tk
 from tkinter import ttk
 import webbrowser
@@ -11,6 +12,39 @@ from datetime import datetime
 
 def open_git(event, link):
   webbrowser.open_new(link)
+
+def markdown_to_html():
+  md_file="swhw_report.md"
+  html_file="swhw_report.html"
+  # Read markdown content
+  with open(md_file, "r", encoding="utf-8") as f:
+    text = f.read()
+
+  # Convert to HTML
+  html = markdown.markdown(text, extensions=["fenced_code", "tables"])
+
+  # Wrap in basic HTML boilerplate
+  full_html = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Linux Migration Toolkit Report</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+<main class="container">
+{html}
+</main>
+</body>
+</html>
+"""
+
+  # Write HTML file
+  with open(html_file, "w", encoding="utf-8") as f:
+    f.write(full_html)
+
+  # Open in default browser
+  # webbrowser.open(f"file://{os.path.abspath(html_file)}")
 
 def get_hwsw_report():
   file1 = "cleaned_standard_apps.md"
@@ -73,7 +107,7 @@ def get_hw_info():
 
     # GPU info
     gpus = c.Win32_VideoController()
-    lines.append("\n ### GPU:\n")
+    lines.append("\n### GPU:\n")
     for gpu in gpus:
       lines.append(f"- {gpu.Name}")
     lines.append("")
@@ -99,6 +133,9 @@ def get_hw_info():
 
   finally:
     pythoncom.CoUninitialize()
+
+  # generate html report
+  markdown_to_html()
 
 def clean_standardapps():
   input_file = "installed_standard_apps.txt"
