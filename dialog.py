@@ -4,6 +4,7 @@ import pythoncom
 import markdown
 import tkinter as tk
 from tkinter import ttk
+from tkinter import font
 import webbrowser
 import subprocess
 import re
@@ -12,6 +13,29 @@ from datetime import datetime
 
 def open_git(event, link):
   webbrowser.open_new(link)
+
+def open_report():
+  html_file="swhw_report.html"
+  webbrowser.open(f"file://{os.path.abspath(html_file)}")
+
+def get_status(phase_index, isNovice):
+  normal_font = font.Font(family="Helvetica", size=11)
+  bold_font = font.Font(family="Helvetica", size=11, weight="bold")
+  if isNovice:
+    phases = ["0. Intro", "1. Gather Info", "2. Backup", "3. Prepare Media"]
+  else:
+    phases = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
+
+  status_frame = tk.Frame(root)
+  status_frame.pack(pady=10, anchor="n")
+  for i, phase in enumerate(phases):
+    lbl_font = bold_font if i == phase_index else normal_font
+    label = tk.Label(status_frame, text=phase, font=lbl_font)
+    label.pack(side="left")
+
+    if i < len(phases) - 1:
+      sep = tk.Label(status_frame, text=" > ", font=normal_font)
+      sep.pack(side="left")
 
 def markdown_to_html():
   md_file="swhw_report.md"
@@ -43,9 +67,6 @@ def markdown_to_html():
   with open(html_file, "w", encoding="utf-8") as f:
     f.write(full_html)
 
-  # Open in default browser
-  # webbrowser.open(f"file://{os.path.abspath(html_file)}")
-
 def get_hwsw_report():
   file1 = "cleaned_standard_apps.md"
   file2 = "cleaned_store_apps.md"
@@ -63,7 +84,19 @@ def get_hwsw_report():
   # Combine files into one markdown report
   with open(output_file, "w", encoding="utf-8") as out:
     out.write(f"{main_title}\n")
-    out.write(f"\n*Generated on {timestamp}*\n\n")
+    out.write(f"\n*Generated on {timestamp}*\n")
+    out.write("""
+## What do I do with this information?
+
+You can use this report to:
+
+- Check your hardware's compatibility with Linux.
+- Find Linux alternatives for the Windows programs you currently use.
+
+Helpful resources:
+
+- [Ubuntu Hardware Support Wiki](https://wiki.ubuntu.com/HardwareSupport)
+- [Linux software equivalents to Windows software](https://wiki.linuxquestions.org/wiki/Linux_software_equivalent_to_Windows_software)\n\n""")
 
     for header, filename in sections:
       out.write(f"{header}\n\n")
@@ -124,6 +157,16 @@ def get_hw_info():
     for printer in printers:
       lines.append(f"- Name: {printer.Name}, Port: {printer.PortName}")
 
+    # Scanners
+    scanners = [d for d in c.Win32_PnPEntity() if d.Name and "scanner" in d.Name.lower()]
+    lines.append("\n### Scanners:\n")
+    for device in scanners:
+      name = device.Name or ""
+      if "scanner" in name.lower() or "imaging" in name.lower():
+        lines.append(f"- Name: {name}")
+    if not scanners:
+      lines.append(f"- No devices found")
+
     # Write all lines to file
     with open(filename, "w", encoding="utf-8") as f:
       f.write("\n".join(lines))
@@ -137,77 +180,52 @@ def get_hw_info():
   # generate html report
   markdown_to_html()
 
-def clean_standardapps():
-  input_file = "installed_standard_apps.txt"
-  output_file = "cleaned_standard_apps.md"
-  cleaned_names = set() # to remove duplicates
+def clean_apps(isStandardList):
+  # Input and output file paths
+  if isStandardList:
+    input_file = "installed_standard_apps.txt"
+    output_file = "cleaned_standard_apps.md"
+  else:
+    input_file = "installed_store_apps.txt"
+    output_file = "cleaned_store_apps.md"
+    guid_pattern = re.compile(r"^[0-9a-fA-F\-]{36}$")
+    prefixes = [
+      "MicrosoftWindows.",
+      "Microsoft.Windows.",
+      "Microsoft.",
+      "MicrosoftCorporationII."
+    ]
+
+  cleaned_names = set()
 
   with open(input_file, "r", encoding="utf-8") as f:
-    lines = f.readlines()[3:]  # Skip first 3 lines (headers)
+    lines = f.readlines()[3:]  # Skip headers
+
     for line in lines:
       line = line.strip()
       if not line:
-        continue  # Skip empty lines
-      if "driver" in line.lower():
-        continue  # Skip lines containing "driver" (case-insensitive)
-      line = re.sub(r"\s+\S+$", "", line)
+        continue
+
+      if not isStandardList:
+        if guid_pattern.match(line):
+          continue
+        for prefix in prefixes:
+          if line.startswith(prefix):
+            line = line[len(prefix):]
+            break
+      else:
+        if "driver" in line.lower():
+          continue
+        # Remove version column
+        line = re.sub(r"\s+\S+$", "", line)
+
       line = "- " + line
       cleaned_names.add(line)
 
-  # Sort and write to file
   with open(output_file, "w", encoding="utf-8") as f:
     for name in sorted(cleaned_names):
       f.write(name + "\n")
 
-  # Remove input file - txt
-  try:
-    os.remove(input_file)
-  except OSError as e:
-    print(f"Error deleting {input_file}: {e}")
-
-def clean_storeapps():
-  # Input and output file paths
-  input_file = "installed_store_apps.txt"
-  output_file = "cleaned_store_apps.md"
-
-  # Regex to detect GUID-like lines
-  guid_pattern = re.compile(r"^[0-9a-fA-F\-]{36}$")
-
-  # Set to collect unique cleaned names
-  cleaned_names = set() # to remove duplicates
-
-  # Prefixes to strip
-  prefixes = [
-    "MicrosoftWindows.",
-    "Microsoft.Windows.",
-    "Microsoft.",
-    "MicrosoftCorporationII."
-    ]
-
-  with open(input_file, "r", encoding="utf-8") as f:
-    lines = f.readlines()[3:]
-    for line in lines:
-      line = line.strip()
-      if not line:
-        continue  # skip empty lines
-      if guid_pattern.match(line):
-        continue  # skip GUIDs
-      for prefix in prefixes:
-        if line.startswith(prefix):
-          line = line[len(prefix):]
-          break  # strip only one prefix at most
-      line = "- " + line
-      cleaned_names.add(line)
-
-  # Sort alphabetically
-  sorted_names = sorted(cleaned_names)
-
-  # Write result
-  with open(output_file, "w", encoding="utf-8") as f:
-    for name in sorted_names:
-      f.write(name + "\n")
-
-  # Remove input file - txt
   try:
     os.remove(input_file)
   except OSError as e:
@@ -227,7 +245,7 @@ def get_info_thread():
     f.write(result.stdout)
   if result.stderr:
     print("PowerShell error:\n", result.stderr)
-  clean_storeapps() # remove dups, empty lines, etc.
+  clean_apps(False) # remove dups, empty lines, etc.
 
   command_standardapps = """
 Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*,
@@ -246,7 +264,7 @@ Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersio
   if result.stderr:
     print("PowerShell error:\n", result.stderr)
 
-  clean_standardapps() # remove dups, empty lines, etc.
+  clean_apps(True) # remove dups, empty lines, etc.
   get_hw_info() # get hardware info in markdown format
   root.after(0, finish_get_info)
 
@@ -254,13 +272,36 @@ def finish_get_info():
   # After work
   progress.stop()
   progress.pack_forget()
-  title_label = ttk.Label(root, text="Finished gathering software and hardware info", font=("Helvetica", 16, "bold"))
+  title_label = ttk.Label(root, text="Finished gathering software and hardware info", font=("Helvetica", 11, "bold"))
   title_label.pack(pady=20)
+
+  frame = ttk.Frame(root)
+  frame.pack(pady=10)
+  back_btn = ttk.Button(frame, text="Back", width=20, command=launch_novice_mode)
+  back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+  home_btn = ttk.Button(frame, text="Home", width=20, command=home)
+  home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+  view_btn = ttk.Button(frame, text="View report", width=20, command=open_report)
+  view_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
+  next_btn = ttk.Button(frame, text="Next", width=20, command=backup_novice)
+  next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
+  quit_button = ttk.Button(root, text="Quit", command=root.destroy)
+  quit_button.pack(pady=10)
+
+def backup_novice():
+  root.title("Let's back up your data")
+  clear_screen()
+  get_status(2, True)
+  title_label = ttk.Label(root, text="", font=("Helvetica", 11, "bold"))
+  title_label.pack(pady=20)
+  quit_button = ttk.Button(root, text="Quit", command=root.destroy)
+  quit_button.pack(pady=10)
 
 def get_info():
   root.title("Gathering software and hardware info")
   clear_screen()
-  title_label = ttk.Label(root, text="Now we are gathering software and hardware info", font=("Helvetica", 16, "bold"))
+  get_status(1, True)
+  title_label = ttk.Label(root, text="Now we are gathering software and hardware info", font=("Helvetica", 11, "bold"))
   title_label.pack(pady=20)
 
   global progress 
@@ -276,6 +317,7 @@ def clear_screen():
 def launch_novice_mode():
   clear_screen()
   root.title("LMTK: Are you familiar with Linux?")
+  get_status(0, True)
 
 #    guide_text = tk.Text(root, height=25, width=100, wrap="word", font=("Helvetica", 11))
 #    guitext.pack(padx=20, pady=20)
@@ -352,8 +394,8 @@ def is_powershell_installed():
 def main():
   global root, novice_btn, expert_btn
   root = tk.Tk()
-  root.geometry("800x600")
-  root.resizable(False, False)
+  root.geometry("900x800")
+  root.resizable(True, True)
   home()
   root.mainloop()
 
