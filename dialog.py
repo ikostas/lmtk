@@ -1,70 +1,108 @@
+import os
+import threading
+import pythoncom
 import tkinter as tk
 from tkinter import ttk
 import webbrowser
 import subprocess
 import re
 import wmi
+from datetime import datetime
 
 def open_git(event, link):
   webbrowser.open_new(link)
 
+def get_hwsw_report():
+  file1 = "cleaned_standard_apps.md"
+  file2 = "cleaned_store_apps.md"
+  file3 = "hardware_info.md"
+  output_file = "swhw_report.md"
+  # Titles
+  main_title = "# Linux Migration Toolkit Report"
+  timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  sections = [
+    ("## Standard Applications", file1),
+    ("## Microsoft Store Applications", file2),
+    ("## Hardware Information", file3),
+]
+
+  # Combine files into one markdown report
+  with open(output_file, "w", encoding="utf-8") as out:
+    out.write(f"{main_title}\n")
+    out.write(f"\n*Generated on {timestamp}*\n\n")
+
+    for header, filename in sections:
+      out.write(f"{header}\n\n")
+      with open(filename, "r", encoding="utf-8") as f:
+        out.write(f.read().strip() + "\n\n")
+
+  # Remove original files
+  for _, filename in sections:
+    try:
+      os.remove(filename)
+    except OSError as e:
+      print(f"Error deleting {filename}: {e}")
+
 def get_hw_info():
-  filename="hardware_summary.txt"
-  c = wmi.WMI()
-  lines = []
+  filename="hardware_info.md"
+  pythoncom.CoInitialize()
+  try:
+    c = wmi.WMI()
+    lines = []
 
-  # CPU info
-  cpus = c.Win32_Processor()
-  lines.append("CPU:")
-  for cpu in cpus:
-    lines.append(f"  Name: {cpu.Name}")
-    lines.append(f"  Number of Cores: {cpu.NumberOfCores}")
-  lines.append("")
+    # CPU info
+    cpus = c.Win32_Processor()
+    lines.append("### CPU:\n")
+    for cpu in cpus:
+      lines.append(f"- Name: {cpu.Name}")
+      lines.append(f"- Number of Cores: {cpu.NumberOfCores}")
 
-  # RAM info (in GB)
-  memories = c.Win32_PhysicalMemory()
-  total_ram_bytes = sum(int(mem.Capacity) for mem in memories)
-  total_ram_gb = total_ram_bytes / (1024 ** 3)
-  lines.append(f"RAM: {total_ram_gb:.2f} GB")
-  lines.append("")
+    # RAM info (in GB)
+    system_info = c.Win32_ComputerSystem()[0]
+    total_ram_bytes = int(system_info.TotalPhysicalMemory)
+    total_ram_gb = total_ram_bytes / (1024 ** 3)
+    lines.append(f"\n### RAM:\n\n- {total_ram_gb:.2f} GB")
 
-  # Drives info
-  drives = c.Win32_LogicalDisk(DriveType=3)  # local disks only
-  lines.append("Drives:")
-  for drive in drives:
-    size_gb = int(drive.Size) / (1024 ** 3) if drive.Size else 0
-    free_gb = int(drive.FreeSpace) / (1024 ** 3) if drive.FreeSpace else 0
-    lines.append(f"  {drive.DeviceID} - Size: {size_gb:.2f} GB, Free: {free_gb:.2f} GB")
-  lines.append("")
+    # Drives info
+    drives = c.Win32_LogicalDisk(DriveType=3)  # local disks only
+    lines.append("\n### Drives:\n")
+    for drive in drives:
+      size_gb = int(drive.Size) / (1024 ** 3) if drive.Size else 0
+      free_gb = int(drive.FreeSpace) / (1024 ** 3) if drive.FreeSpace else 0
+      lines.append(f"- {drive.DeviceID} - Size: {size_gb:.2f} GB, Free: {free_gb:.2f} GB")
 
-  # GPU info
-  gpus = c.Win32_VideoController()
-  lines.append("GPU:")
-  for gpu in gpus:
-    lines.append(f"  {gpu.Name}")
-  lines.append("")
+    # GPU info
+    gpus = c.Win32_VideoController()
+    lines.append("\n ### GPU:\n")
+    for gpu in gpus:
+      lines.append(f"- {gpu.Name}")
+    lines.append("")
 
-  # Network adapters (physical and enabled)
-  net_adapters = [n for n in c.Win32_NetworkAdapter() if n.PhysicalAdapter and n.NetEnabled]
-  lines.append("Network Adapters:")
-  for net in net_adapters:
-    lines.append(f"  Name: {net.Name}, Connection ID: {net.NetConnectionID}, Type: {net.AdapterType}")
-  lines.append("")
+    # Network adapters (physical and enabled)
+    net_adapters = [n for n in c.Win32_NetworkAdapter() if n.PhysicalAdapter and n.NetEnabled]
+    lines.append("\n### Network Adapters:\n")
+    for net in net_adapters:
+      lines.append(f"- Name: {net.Name}, Connection ID: {net.NetConnectionID}, Type: {net.AdapterType}")
 
-  # Printers info
-  printers = c.Win32_Printer()
-  lines.append("Printers:")
-  for printer in printers:
-    lines.append(f"  Name: {printer.Name}, Port: {printer.PortName}")
-  lines.append("")
+    # Printers info
+    printers = c.Win32_Printer()
+    lines.append("\n### Printers:\n")
+    for printer in printers:
+      lines.append(f"- Name: {printer.Name}, Port: {printer.PortName}")
 
-  # Write all lines to file
-  with open(filename, "w", encoding="utf-8") as f:
-    f.write("\n".join(lines))
+    # Write all lines to file
+    with open(filename, "w", encoding="utf-8") as f:
+      f.write("\n".join(lines))
+    
+    # Generate combined report and remove partial reports
+    get_hwsw_report()
+
+  finally:
+    pythoncom.CoUninitialize()
 
 def clean_standardapps():
   input_file = "installed_standard_apps.txt"
-  output_file = "cleaned_standard_apps.txt"
+  output_file = "cleaned_standard_apps.md"
   cleaned_names = set() # to remove duplicates
 
   with open(input_file, "r", encoding="utf-8") as f:
@@ -75,6 +113,8 @@ def clean_standardapps():
         continue  # Skip empty lines
       if "driver" in line.lower():
         continue  # Skip lines containing "driver" (case-insensitive)
+      line = re.sub(r"\s+\S+$", "", line)
+      line = "- " + line
       cleaned_names.add(line)
 
   # Sort and write to file
@@ -82,10 +122,16 @@ def clean_standardapps():
     for name in sorted(cleaned_names):
       f.write(name + "\n")
 
+  # Remove input file - txt
+  try:
+    os.remove(input_file)
+  except OSError as e:
+    print(f"Error deleting {input_file}: {e}")
+
 def clean_storeapps():
   # Input and output file paths
   input_file = "installed_store_apps.txt"
-  output_file = "cleaned_store_apps.txt"
+  output_file = "cleaned_store_apps.md"
 
   # Regex to detect GUID-like lines
   guid_pattern = re.compile(r"^[0-9a-fA-F\-]{36}$")
@@ -98,6 +144,7 @@ def clean_storeapps():
     "MicrosoftWindows.",
     "Microsoft.Windows.",
     "Microsoft.",
+    "MicrosoftCorporationII."
     ]
 
   with open(input_file, "r", encoding="utf-8") as f:
@@ -112,6 +159,7 @@ def clean_storeapps():
         if line.startswith(prefix):
           line = line[len(prefix):]
           break  # strip only one prefix at most
+      line = "- " + line
       cleaned_names.add(line)
 
   # Sort alphabetically
@@ -122,11 +170,17 @@ def clean_storeapps():
     for name in sorted_names:
       f.write(name + "\n")
 
-def get_info():
-# PowerShell command
+  # Remove input file - txt
+  try:
+    os.remove(input_file)
+  except OSError as e:
+    print(f"Error deleting {input_file}: {e}")
+
+def get_info_thread():
+  # PowerShell command
   command_storeapps = 'Get-AppxPackage | Select-Object Name'
 
-# Run the command
+  # Run the command
   result = subprocess.run(
     ["powershell", "-Command", command_storeapps],
     capture_output=True,
@@ -156,7 +210,27 @@ Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersio
     print("PowerShell error:\n", result.stderr)
 
   clean_standardapps() # remove dups, empty lines, etc.
-  get_hw_info()
+  get_hw_info() # get hardware info in markdown format
+  root.after(0, finish_get_info)
+
+def finish_get_info():
+  # After work
+  progress.stop()
+  progress.pack_forget()
+  title_label = ttk.Label(root, text="Finished gathering software and hardware info", font=("Helvetica", 16, "bold"))
+  title_label.pack(pady=20)
+
+def get_info():
+  root.title("Gathering software and hardware info")
+  clear_screen()
+  title_label = ttk.Label(root, text="Now we are gathering software and hardware info", font=("Helvetica", 16, "bold"))
+  title_label.pack(pady=20)
+
+  global progress 
+  progress = ttk.Progressbar(root, mode="indeterminate")
+  progress.pack()
+  progress.start()
+  threading.Thread(target=get_info_thread, daemon=True).start()
 
 def clear_screen():
   for widget in root.winfo_children():
