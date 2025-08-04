@@ -1,0 +1,255 @@
+from app_context import AppContext
+
+class Report():
+  def markdown_to_html(context: AppContext):
+    # Read markdown content
+    with open(context.md_report, "r", encoding="utf-8") as f:
+      text = f.read()
+
+    # Convert to HTML
+    html = markdown.markdown(text, extensions=["fenced_code", "tables", "toc", "attr_list"])
+
+    # Wrap in basic HTML boilerplate
+    full_html = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Linux Migration Toolkit Report</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+<main class="container">
+{html}
+</main>
+</body>
+</html>
+"""
+
+    # Write HTML file
+    with open(context.html_report, "w", encoding="utf-8") as f:
+      f.write(full_html)
+
+  def get_hwsw_report(context: AppContext):
+    file1 = context.standard_apps_md
+    file2 = context.store_apps_md
+    file3 = context.hw_report_md
+    output_file = context.md_report
+    # Titles
+    main_title = "# Linux Migration Toolkit Report"
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sections = [
+      ("## Standard Applications", file1),
+      ("## Microsoft Store Applications", file2),
+      ("## Hardware Information", file3),
+  ]
+
+    # Combine files into one markdown report
+    with open(output_file, "w", encoding="utf-8") as out:
+      out.write(f"""
+{main_title}
+
+*Generated on {timestamp}*
+
+## What do I do with this information?
+
+You can use this report to:
+
+- Check your hardware's compatibility with Linux.
+- Find Linux alternatives for the Windows programs you currently use.
+
+Helpful resources:
+
+- [Ubuntu Hardware Support Wiki](https://wiki.ubuntu.com/HardwareSupport)
+- [Linux software equivalents to Windows software](https://wiki.linuxquestions.org/wiki/Linux_software_equivalent_to_Windows_software)\n\n
+
+## Table of Contents
+
+- [Standard Applications](#standard-applications) &dash; these apps are installed, when you download and installation file and launch it
+- [Microsoft Store Applications](#microsoft-store-applications) &dash; these are the apps, installed from Microsoft Store
+- [Hardware Information](#hardware-information) &dash; some basic information about your system: CPU, GPU, RAM, HDD/SSD\n
+""")
+
+      for header, filename in sections:
+        out.write(f"{header}\n\n")
+        with open(filename, "r", encoding="utf-8") as f:
+          out.write(f.read().strip() + "\n\n")
+
+    # Remove original files
+    for _, filename in sections:
+      try:
+        os.remove(filename)
+      except OSError as e:
+        print(f"Error deleting {filename}: {e}")
+
+  def get_hw_info(context: AppContext):
+    filename = context.hw_report_md
+    pythoncom.CoInitialize()
+    try:
+      c = wmi.WMI()
+      lines = []
+
+      # CPU info
+      cpus = c.Win32_Processor()
+      lines.append("### CPU:\n")
+      for cpu in cpus:
+        lines.append(f"- Name: {cpu.Name}")
+        lines.append(f"- Number of Cores: {cpu.NumberOfCores}")
+
+      # RAM info (in GB)
+      system_info = c.Win32_ComputerSystem()[0]
+      total_ram_bytes = int(system_info.TotalPhysicalMemory)
+      total_ram_gb = total_ram_bytes / (1024 ** 3)
+      lines.append(f"\n### RAM:\n\n- {total_ram_gb:.2f} GB")
+
+      # Drives info
+      drives = c.Win32_LogicalDisk(DriveType=3)  # local disks only
+      lines.append("\n### Drives:\n")
+      for drive in drives:
+        size_gb = int(drive.Size) / (1024 ** 3) if drive.Size else 0
+        free_gb = int(drive.FreeSpace) / (1024 ** 3) if drive.FreeSpace else 0
+        lines.append(f"- {drive.DeviceID} - Size: {size_gb:.2f} GB, Free: {free_gb:.2f} GB")
+
+      # GPU info
+      gpus = c.Win32_VideoController()
+      lines.append("\n### GPU:\n")
+      for gpu in gpus:
+        lines.append(f"- {gpu.Name}")
+      lines.append("")
+
+      # Network adapters (physical and enabled)
+      net_adapters = [n for n in c.Win32_NetworkAdapter() if n.PhysicalAdapter and n.NetEnabled]
+      lines.append("\n### Network Adapters:\n")
+      for net in net_adapters:
+        lines.append(f"- Name: {net.Name}, Connection ID: {net.NetConnectionID}, Type: {net.AdapterType}")
+
+      # Printers info
+      printers = c.Win32_Printer()
+      lines.append("\n### Printers:\n")
+      for printer in printers:
+        lines.append(f"- Name: {printer.Name}, Port: {printer.PortName}")
+
+      # Scanners
+      scanners = [d for d in c.Win32_PnPEntity() if d.Name and "scanner" in d.Name.lower()]
+      lines.append("\n### Scanners:\n")
+      for device in scanners:
+        name = device.Name or ""
+        if "scanner" in name.lower() or "imaging" in name.lower():
+          lines.append(f"- Name: {name}")
+      if not scanners:
+        lines.append(f"- No devices found")
+
+    finally:
+      pythoncom.CoUninitialize()
+
+    # Write all lines to file
+    with open(filename, "w", encoding="utf-8") as f:
+      f.write("\n".join(lines))
+    
+    # Generate combined report and remove partial reports
+    get_hwsw_report(context)
+
+    # generate html report
+    markdown_to_html(context)
+
+  def clean_apps(isStandardList, context: AppContext):
+    # Input and output file paths
+    if isStandardList:
+      input_file = context.standard_apps_txt
+      output_file = context.standard_apps_md
+    else:
+      input_file = context.store_apps_txt
+      output_file = context.store_apps_md
+      guid_pattern = re.compile(r"^[0-9a-fA-F\-]{36}$")
+      prefixes = [
+        "MicrosoftWindows.",
+        "Microsoft.Windows.",
+        "Microsoft.",
+        "MicrosoftCorporationII."
+      ]
+
+    cleaned_names = set()
+
+    with open(input_file, "r", encoding="utf-8") as f:
+      lines = f.readlines()[3:]  # Skip headers
+
+      for line in lines:
+        line = line.strip()
+        if not line:
+          continue
+
+        if not isStandardList:
+          if guid_pattern.match(line):
+            continue
+          for prefix in prefixes:
+            if line.startswith(prefix):
+              line = line[len(prefix):]
+              break
+        else:
+          if "driver" in line.lower():
+            continue
+
+        line = "- " + line
+        cleaned_names.add(line)
+
+    with open(output_file, "w", encoding="utf-8") as f:
+      for name in sorted(cleaned_names):
+        f.write(name + "\n")
+
+    try:
+      os.remove(input_file)
+    except OSError as e:
+      print(f"Error deleting {input_file}: {e}")
+
+  def get_info_thread(context: AppContext):
+    # PowerShell command
+    command_storeapps = 'Get-AppxPackage | Select-Object Name'
+
+    # Run the command
+    result = subprocess.run(
+      ["powershell", "-Command", command_storeapps],
+      capture_output=True,
+      text=True
+    )
+    with open(context.store_apps_txt, "w", encoding="utf-8") as f:
+      f.write(result.stdout)
+    if result.stderr:
+      print("PowerShell error:\n", result.stderr)
+    clean_apps(False, context) # remove dups, empty lines, etc.
+
+    command_standardapps = """
+Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*,
+                  HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* |
+    Select-Object DisplayName |
+    Where-Object { $_.DisplayName } |
+    Sort-Object DisplayName
+"""
+    result = subprocess.run(
+      ["powershell", "-Command", command_standardapps],
+      capture_output=True,
+      text=True
+    )
+    with open(context.standard_apps_txt, "w", encoding="utf-8") as f:
+      f.write(result.stdout)
+    if result.stderr:
+      print("PowerShell error:\n", result.stderr)
+
+    clean_apps(True, context) # remove dups, empty lines, etc.
+    get_hw_info(context) # get hardware info in markdown format
+    context.root.after(0, lambda: finish_get_info(context))
+
+  def finish_get_info(context: AppContext):
+    # After work
+    context.stop_progress()
+    context.set_root_label("Finished gathering software and hardware info")
+
+    frame = ttk.Frame(context.root)
+    frame.pack(pady=10)
+    back_btn = ttk.Button(frame, text="Back", width=20, command=lambda: launch_novice_mode(context))
+    back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+    home_btn = ttk.Button(frame, text="Home", width=20, command=lambda: home(context))
+    home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+    view_btn = ttk.Button(frame, text="View report", width=20, command=lambda: open_link(f"file://{os.path.abspath(context.html_report)}"))
+    view_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
+    next_btn = ttk.Button(frame, text="Next", width=20, command=lambda: backup_novice(context))
+    next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
+    context.quit_button()
