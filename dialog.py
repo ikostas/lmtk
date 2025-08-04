@@ -69,6 +69,10 @@ class AppContext():
     return self._store_apps_md
 
   @property
+  def hw_report_md(self):
+    return self._hw_report_md
+  
+  @property
   def md_report(self):
     return self._md_report
 
@@ -76,16 +80,8 @@ class AppContext():
   def html_report(self):
     return self._html_report
 
-  @property
-  def hw_report_md(self):
-    return self._hw_report_md
-  
-def open_git(event, link):
+def open_link(link):
   webbrowser.open_new(link)
-
-def open_report(context: AppContext):
-  html_file = context.html_report
-  webbrowser.open(f"file://{os.path.abspath(html_file)}")
 
 def get_status(step_index, isNovice, context: AppContext):
   normal_font = font.Font(family="Helvetica", size=11)
@@ -107,14 +103,12 @@ def get_status(step_index, isNovice, context: AppContext):
       sep.pack(side="left")
 
 def markdown_to_html(context: AppContext):
-  md_file = context.md_report
-  html_file = context.html_report
   # Read markdown content
-  with open(md_file, "r", encoding="utf-8") as f:
+  with open(context.md_report, "r", encoding="utf-8") as f:
     text = f.read()
 
   # Convert to HTML
-  html = markdown.markdown(text, extensions=["fenced_code", "tables"])
+  html = markdown.markdown(text, extensions=["fenced_code", "tables", "toc", "attr_list"])
 
   # Wrap in basic HTML boilerplate
   full_html = f"""<!DOCTYPE html>
@@ -133,7 +127,7 @@ def markdown_to_html(context: AppContext):
 """
 
   # Write HTML file
-  with open(html_file, "w", encoding="utf-8") as f:
+  with open(context.html_report, "w", encoding="utf-8") as f:
     f.write(full_html)
 
 def get_hwsw_report(context: AppContext):
@@ -167,7 +161,14 @@ You can use this report to:
 Helpful resources:
 
 - [Ubuntu Hardware Support Wiki](https://wiki.ubuntu.com/HardwareSupport)
-- [Linux software equivalents to Windows software](https://wiki.linuxquestions.org/wiki/Linux_software_equivalent_to_Windows_software)\n\n""")
+- [Linux software equivalents to Windows software](https://wiki.linuxquestions.org/wiki/Linux_software_equivalent_to_Windows_software)\n\n
+
+## Table of Contents
+
+- [Standard Applications](#standard-applications) &dash; these apps are installed, when you download and installation file and launch it
+- [Microsoft Store Applications](#microsoft-store-applications) &dash; these are the apps, installed from Microsoft Store
+- [Hardware Information](#hardware-information) &dash; some basic information about your system: CPU, GPU, RAM, HDD/SSD\n
+""")
 
     for header, filename in sections:
       out.write(f"{header}\n\n")
@@ -287,8 +288,6 @@ def clean_apps(isStandardList, context: AppContext):
       else:
         if "driver" in line.lower():
           continue
-        # Remove version column
-        line = re.sub(r"\s+\S+$", "", line)
 
       line = "- " + line
       cleaned_names.add(line)
@@ -321,7 +320,7 @@ def get_info_thread(context: AppContext):
   command_standardapps = """
 Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*,
                   HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* |
-    Select-Object DisplayName, DisplayVersion, Publisher, InstallDate |
+    Select-Object DisplayName |
     Where-Object { $_.DisplayName } |
     Sort-Object DisplayName
 """
@@ -350,7 +349,7 @@ def finish_get_info(context: AppContext):
   back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
   home_btn = ttk.Button(frame, text="Home", width=20, command=lambda: home(context))
   home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-  view_btn = ttk.Button(frame, text="View report", width=20, command=lambda: open_report(context))
+  view_btn = ttk.Button(frame, text="View report", width=20, command=lambda: open_link(f"file://{os.path.abspath(context.html_report)}"))
   view_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
   next_btn = ttk.Button(frame, text="Next", width=20, command=lambda: backup_novice(context))
   next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
@@ -381,6 +380,11 @@ def launch_novice_mode(context: AppContext):
   clear_screen(context)
   context.set_root_label("LMTK: Are you familiar with Linux?")
   get_status(0, True, context)
+  text_frame = ttk.Frame(context.root)
+  text_frame.pack(padx=10, pady=10, fill="x")
+  text_frame.configure(height=200)  
+  scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
+  scrollbar.pack(side="right", fill="y")
   guide_content = """\
 So, you're going to install Linux. But are you familiar with Linux?
 
@@ -400,13 +404,16 @@ Here are some links (all of them are LiveCDs, by the way):
 - Fedora XFCE
 - Ubuntu (Gnome-based)
 - Ubuntu XFCE
+
+When you click 'Next', we'll gather information about your software and hardware, save it as Markdown (.md) and HTML (.html) reports for future use.
 """
-  text = tk.Text(context.root, height=25, width=100, wrap="word", font=("Helvetica", 11), bd=0, bg=context.root.cget("bg"), relief="flat", highlightthickness=0)
+  text = tk.Text(text_frame, height=25, width=100, wrap="word", font=("Helvetica", 11), bd=0, bg=context.root.cget("bg"), relief="flat", highlightthickness=0, yscrollcommand=scrollbar.set)
+  text.pack(side="left", fill="both", expand=True)
   text.insert("1.0", guide_content)
+  scrollbar.config(command=text.yview)
   text.tag_config("line_spacing", spacing3=6)  # spacing in pixels
   text.tag_add("line_spacing", "1.0", "end")
   text.config(state="disabled")
-  text.pack(padx=20, pady=20)
 
   links = [
     ("link_gitForWindows", "4.2", "4.17", "https://git-scm.com/downloads/win"),
@@ -420,16 +427,16 @@ Here are some links (all of them are LiveCDs, by the way):
   for tag, start, end, url in links:
     text.tag_add(tag, start, end)
     text.tag_config(tag, foreground="blue")
-    text.tag_bind(tag, "<Button-1>", lambda event, url=url: open_git(event, url))
+    text.tag_bind(tag, "<Button-1>", lambda event, url=url: open_link(url))
 
   text.config(state=tk.DISABLED)
 
   # buttons
-  frame = ttk.Frame(context.root)
-  frame.pack(pady=10)
-  home_btn = ttk.Button(frame, text="Home", width=20, command=lambda: home(context))
+  button_frame = ttk.Frame(context.root)
+  button_frame.pack(padx=10, pady=10, anchor="center")
+  home_btn = ttk.Button(button_frame, text="Home", width=20, command=lambda: home(context))
   home_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-  next_btn = ttk.Button(frame, text="Next", width=20, command=lambda: get_info(context))
+  next_btn = ttk.Button(button_frame, text="Next", width=20, command=lambda: get_info(context))
   next_btn.grid(row=0, column=1, padx=10, pady=5, sticky="e")
   context.quit_button()
 
@@ -439,11 +446,11 @@ def launch_expert_mode(context: AppContext):
 def is_powershell_installed():
   try:
     subprocess.run(
-        ["powershell", "-Command", "Write-Output 'OK'"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        check=True
-        )
+      ["powershell", "-Command", "Write-Output 'OK'"],
+      stdout=subprocess.DEVNULL,
+      stderr=subprocess.DEVNULL,
+      check=True
+      )
     return True
   except (FileNotFoundError, subprocess.CalledProcessError):
     return False
