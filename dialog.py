@@ -50,16 +50,17 @@ def backup_novice(context: AppContext):
   context.set_root_title("Let's back up your data")
   clear_screen(context)
   get_status(2, True, context)
-  context.set_root_label("Let's back up your data")
+  backup_label = ttk.Label(context.root, text="Let's back up your data", font=("Helvetica", 12))
+  backup_label.pack(pady=0) 
   backup = Backup(context)
 
   # 1. destination label
   destination_label = ttk.Label(context.root, text="Your current destination folder: " + backup.destination_folder)
-  destination_label.pack(pady=10, padx=10, anchor="center")
+  destination_label.pack(pady=0, padx=10, anchor="center")
 
   # 2. button_frame: set destination, add source
   button_frame = ttk.Frame(context.root)
-  button_frame.pack(pady=10)
+  button_frame.pack(pady=5)
   destination_btn = ttk.Button(button_frame, text="Set destination", width=20, command=lambda: backup.set_destination(destination_label, context))
   destination_btn.grid(row=0, column=0, padx=10, pady=5, sticky="n")
   destination_desc = ttk.Label(button_frame, text="Here you set the folder, where to put your archive", justify="left", wraplength=400)
@@ -70,8 +71,10 @@ def backup_novice(context: AppContext):
   source_desc.grid(row=1, column=1, padx=10, sticky="w")
 
   # 3. folders from backup
+  backup_folders_label = ttk.Label(context.root, text="Your source folders for backup -- press Remove to remove from the list:")
+  backup_folders_label.pack(pady=5, padx=30, anchor="center")
   backup.folder_list_frame = ttk.Frame(context.root)
-  backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=10)
+  backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=5)
 
   if context.backup_input == []:
     context.backup_input = backup.get_default_folders()
@@ -94,11 +97,13 @@ def backup_novice(context: AppContext):
   next_btn.grid(row=0, column=4, padx=10, pady=5, sticky="e")
 
   context.quit_button()
+
 def media_novice(context: AppContext):
   context.set_root_title("Let's prepare your installation media")
   clear_screen(context)
   get_status(3, True, context)
-  context.set_root_label("Let's prepare your installation media")
+  media_label = ttk.Label(context.root, text="Let's prepare your installation media", font=("Helvetica", 12))
+  media_label.pack(pady=10) 
   context.quit_button()
 
 def get_info(context: AppContext):
@@ -106,7 +111,8 @@ def get_info(context: AppContext):
   context.set_root_title("Gathering software and hardware info")
   clear_screen(context)
   get_status(1, True, context)
-  context.set_root_label("Now we are gathering software and hardware info")
+  context.set_report_label("Now we are gathering software and hardware info")
+
   #  global progress 
   context.start_progress()
   report = Report()
@@ -131,7 +137,8 @@ def clear_screen(context: AppContext):
 def launch_novice_mode(context: AppContext):
   context.set_root_title("LMTK: Are you familiar with Linux?")
   clear_screen(context)
-  context.set_root_label("LMTK: Are you familiar with Linux?")
+  intro_label = ttk.Label(context.root, text="LMTK: Are you familiar with Linux?", font=("Helvetica", 12))
+  intro_label.pack(pady=10) 
   get_status(0, True, context)
   text_frame = ttk.Frame(context.root)
   text_frame.pack(padx=20, pady=10, fill="x")
@@ -199,7 +206,8 @@ def launch_expert_mode(context: AppContext):
 def home(context: AppContext):
   clear_screen(context)
   context.set_root_title("Welcome to Linux Migration Toolkit!")
-  context.set_root_label("Welcome to Linux Migration Toolkit! Choose Your Mode")
+  home_label = ttk.Label(context.root, text="Welcome to Linux Migration Toolkit! Choose Your Mode", font=("Helvetica", 12))
+  home_label.pack(pady=10) 
 
   # general info
   text_intro = "Welcome to the Linux Migration Toolkit for the desktop! This app gathers information about your installed programs and hardware for future use, helps you back up your data, and assists in preparing installation media using external tools."

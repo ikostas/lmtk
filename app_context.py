@@ -17,6 +17,13 @@ class AppContext():
     self._backup_input = [] # folders to backup
     self._backup_output = None # where to put a backup
 
+  def set_report_label(self, text):
+    if hasattr(self, "_label"):
+      self._label.config(text=text)
+    else:
+      self._label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
+      self._label.pack(pady=10)
+
   def run(self):
     self._root.mainloop()
 
@@ -31,10 +38,6 @@ class AppContext():
 
   def set_root_title(self, title):
     self._root.title(title)
-
-  def set_root_label(self, title):
-    title_label = ttk.Label(self.root, text=title, font=("Helvetica", 11, "bold"))
-    title_label.pack(pady=20)
 
   def quit_button(self):
     quit_button = ttk.Button(self.root, text="Quit", command=self.root.destroy)
