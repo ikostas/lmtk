@@ -248,4 +248,5 @@ Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersio
   def finish_get_info(self, context: AppContext):
     context.stop_progress()
     context.set_report_label("Finished gathering software and hardware info")
+    context.view_btn.config(state="normal")
 

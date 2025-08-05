@@ -16,13 +16,25 @@ class AppContext():
     self._html_report = "swhw_report.html"
     self._backup_input = [] # folders to backup
     self._backup_output = None # where to put a backup
+    self.source_size = 0
+    self.source_size_human = "0 B"
+    self.view_button = None
+
+  def set_source_folder_label(self):
+    # change this to human-readable
+    text = "Total source folder size is: " + self.source_size_human
+    if hasattr(self, "_source_size_label"):
+      self._source_size_label.config(text=text)
+    else:
+      self._source_size_label = ttk.Label(self.root, text=text)
+      self._source_size_label.pack(pady=10)
 
   def set_report_label(self, text):
-    if hasattr(self, "_label"):
-      self._label.config(text=text)
+    if hasattr(self, "_report_label"):
+      self._report_label.config(text=text)
     else:
-      self._label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
-      self._label.pack(pady=10)
+      self._report_label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
+      self._report_label.pack(pady=10)
 
   def run(self):
     self._root.mainloop()
@@ -46,10 +58,6 @@ class AppContext():
   @property
   def backup_input(self):
     return self._backup_input
-
-  @backup_input.setter
-  def backup_input(self, value):
-    self._backup_input = value
 
   @property
   def backup_output(self):

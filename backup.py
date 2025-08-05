@@ -37,10 +37,22 @@ class Backup():
 
   def add_folder(self, context: AppContext):
     folder = filedialog.askdirectory()
+    self.add_folder_backend(folder, context)
+
+  def add_folder_backend(self, folder, context: AppContext):
     if folder and folder not in context.backup_input:
       folder = os.path.normpath(folder)
-      context.backup_input.append(folder)
-      self.display_folder(folder, context)
+      folder_size = self.get_folder_size(folder)
+      folder_info = {
+        "path": folder,
+        "size_bytes": folder_size,
+        "size_human": self.get_size_hr(folder_size)
+        }
+      context.backup_input.append(folder_info)
+      context.source_size += folder_size
+      context.source_size_human = self.get_size_hr(context.source_size)
+      context.set_source_folder_label()
+      self.display_folder(folder_info, context)
 
   def set_destination(self, destination_label, context: AppContext):
     folder = filedialog.askdirectory()
@@ -52,18 +64,19 @@ class Backup():
   def display_folder(self, folder, context: AppContext):
     frame = ttk.Frame(self.folder_list_frame)
     frame.pack(pady=2,padx=30, anchor="w")
-    size = self.get_folder_size(folder)
-
-    label = ttk.Label(frame, text=f"{folder} ({size})", anchor="w", justify="left")
+    label = ttk.Label(frame, text=f"{folder['path']} ({folder['size_human']})", anchor="w", justify="left")
     label.grid(row=0, column=0, sticky="w")
 
     remove_btn = ttk.Button(frame, text="Remove", width=10,
-      command=lambda f=folder, fr=frame: self.remove_folder(f, fr, context))
+      command=lambda: self.remove_folder(folder, frame, context))
     remove_btn.grid(row=0, column=1, sticky="w")
 
   def remove_folder(self, folder, frame, context: AppContext):
     if folder in context.backup_input:
+      context.source_size -= folder['size_bytes'] 
+      context.source_size_human = self.get_size_hr(context.source_size)
       context.backup_input.remove(folder)
+      context.set_source_folder_label()
       frame.destroy()
 
   def get_folder_size(self, path):
@@ -75,6 +88,9 @@ class Backup():
           total += os.path.getsize(fp)
         except OSError:
           pass
+    return total
+
+  def get_size_hr(self, total):
     for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
       if total < 1024:
         return f"{total:.1f} {unit}"

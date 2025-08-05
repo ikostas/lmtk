@@ -71,21 +71,23 @@ def backup_novice(context: AppContext):
   source_desc.grid(row=1, column=1, padx=10, sticky="w")
 
   # 3. folders from backup
-  backup_folders_label = ttk.Label(context.root, text="Your source folders for backup -- press Remove to remove from the list:")
+  backup_folders_label = ttk.Label(context.root, text="Your source folders for backup -- press 'Remove' to remove from the list.")
   backup_folders_label.pack(pady=5, padx=30, anchor="center")
+  context.set_source_folder_label()
   backup.folder_list_frame = ttk.Frame(context.root)
   backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=5)
 
   if context.backup_input == []:
-    context.backup_input = backup.get_default_folders()
-  if context.backup_input:
-    for folder in context.backup_input:
-      backup.display_folder(folder, context)
+    for i in backup.get_default_folders():
+      backup.add_folder_backend(i, context)
+  # if context.backup_input:
+  #  for folder in context.backup_input:
+  #    backup.display_folder(folder, context)
 
   # 4. bottom buttons
   bottom_frame = ttk.Frame(context.root)
   bottom_frame.pack(pady=10)
-  back_btn = ttk.Button(bottom_frame, text="Back", width=20, command=lambda: launch_novice_mode(context))
+  back_btn = ttk.Button(bottom_frame, text="Back", width=20, command=lambda: get_info(context))
   back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
   home_btn = ttk.Button(bottom_frame, text="Home", width=20, command=lambda: home(context))
   home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
@@ -120,8 +122,9 @@ def get_info(context: AppContext):
 
   frame = ttk.Frame(context.root)
   frame.pack(pady=10)
-  view_btn = ttk.Button(frame, text="View report (when ready)", width=30, command=lambda: open_link(f"file://{os.path.abspath(context.html_report)}"))
-  view_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
+  context.view_btn = ttk.Button(frame, text="View report", width=30, command=lambda: open_link(f"file://{os.path.abspath(context.html_report)}"))
+  context.view_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
+  context.view_btn.config(state="disabled")
   back_btn = ttk.Button(frame, text="Back", width=30, command=lambda: launch_novice_mode(context))
   back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
   home_btn = ttk.Button(frame, text="Home", width=30, command=lambda: home(context))
