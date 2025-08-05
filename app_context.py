@@ -1,3 +1,7 @@
+import tkinter as tk # UI
+from tkinter import ttk, font # UI
+import os
+
 class AppContext():
   def __init__(self):
     self._root = tk.Tk()
@@ -20,7 +24,6 @@ class AppContext():
     self.progress = ttk.Progressbar(self._root, mode="indeterminate")
     self.progress.pack()
     self.progress.start()
-    threading.Thread(target=lambda: get_info_thread(context), daemon=True).start()
 
   def stop_progress(self):
     self.progress.stop()

@@ -1,4 +1,7 @@
 from app_context import AppContext
+import subprocess # execute PowerShell script for user folder detection
+from tkinter import ttk, filedialog 
+import os
 
 class Backup():
   def __init__(self, context: AppContext):
@@ -33,25 +36,27 @@ class Backup():
   def add_folder(self, context: AppContext):
     folder = filedialog.askdirectory()
     if folder and folder not in context.backup_input:
+      folder = os.path.normpath(folder)
       context.backup_input.append(folder)
-      self.display_folder(folder)
+      self.display_folder(folder, context)
 
   def set_destination(self, destination_label, context: AppContext):
     folder = filedialog.askdirectory()
     if folder: 
+      folder = os.path.normpath(folder)
       context.backup_output = folder
-      destination_label.config(text=folder)
+      destination_label.config(text="Your current destination folder: " + folder)
 
   def display_folder(self, folder, context: AppContext):
     frame = ttk.Frame(self.folder_list_frame)
-    frame.pack(fill="x", pady=2)
+    frame.pack(pady=2)
     label = ttk.Label(frame, text=folder)
-    label.pack(side="left", fill="x", expand=True)
+    label.pack(side="left")
     remove_btn = ttk.Button(frame, text="Remove", width=7, command=lambda f=folder, fr=frame: self.remove_folder(f, fr, context))
     remove_btn.pack(side="right")
 
   def remove_folder(self, folder, frame, context: AppContext):
-    if folder in self.folders:
+    if folder in context.backup_input:
       context.backup_input.remove(folder)
       frame.destroy()
 

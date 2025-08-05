@@ -1,2 +1,64 @@
-*.txt
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyInstaller
+*.spec
+dist/
+build/
+
+# mypy / pytest / coverage
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Packaging
+*.egg-info/
+.eggs/
+*.whl
+*.tar.gz
+
+# Databases or config
+*.sqlite3
+*.db
+*.env
+*.ini
+*.cfg
+*.toml
+
+# === Vim ===
+# Swap files
 *.swp
+*.swo
+*.swn
+
+# Backup files
+*~
+*.bak
+
+# Undo files
+*.un~
+
+# Vim session/config
+Session.vim
+.vimrc.bundles
+.vim/
+
