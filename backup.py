@@ -6,6 +6,7 @@ import os
 import threading
 import tarfile
 import datetime
+import logging
 
 class Backup():
   def __init__(self, context: AppContext):
@@ -99,12 +100,9 @@ class Backup():
       total /= 1024
     return f"{total:.1f} PB"
 
-  def is_junction(self, path):
-    try:
-      attrs = os.lstat(path).st_file_attributes
-      return bool(attrs & stat.FILE_ATTRIBUTE_REPARSE_POINT)
-    except Exception:
-      return False
+  def start_backup(self, context: AppContext):
+    context.start_progress()
+    threading.Thread(target=lambda: self.create_tar_archive(context), daemon=True).start()
 
   def create_tar_archive(self, context: AppContext):
     if context.compress:
@@ -116,6 +114,15 @@ class Backup():
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_path = os.path.join(context.backup_output, f"backup_{timestamp}.{extension}")
+    log_filename = f"log_{timestamp}.txt"
+    log_path = os.path.join(context.backup_output, log_filename)
+
+    logging.basicConfig(
+      filename=log_path,
+      level=logging.INFO,
+      format='%(asctime)s - %(levelname)s - %(message)s',
+      filemode='w'  # overwrite if re-run
+    )
 
     with tarfile.open(output_path, mode) as tar:
       for folder_info in context.backup_input:
@@ -125,4 +132,12 @@ class Backup():
         try:
           tar.add(base_path, arcname=arcname)
         except (PermissionError, FileNotFoundError) as e:
-          print(f"Skipping {base_path}: {e}")
+          logging.error(f"Skipping {base_path}: {e}")
+
+    context.root.after(0, lambda: self.after_backup(context))
+
+  def after_backup(self, context: AppContext):
+    context.stop_progress()
+    finished_label = ttk.Label(context.progress_frame, text="Backup complete", font=("Helvetica", 12))
+    finished_label.pack()
+

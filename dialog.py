@@ -57,6 +57,14 @@ def backup_novice(context: AppContext):
   # 1. destination label
   destination_label = ttk.Label(context.root, text="Your current destination folder: " + backup.destination_folder)
   destination_label.pack(pady=0, padx=10, anchor="center")
+  check_var = tk.BooleanVar(value=context.compress)
+
+  def update_context(*args):
+      context.compress = check_var.get()
+
+  check_var.trace_add("write", update_context)
+  checkbox = ttk.Checkbutton(context.root, text="Enable compression", variable=check_var)
+  checkbox.pack(pady=0, padx=10, anchor="center")
 
   # 2. button_frame: set destination, add source
   button_frame = ttk.Frame(context.root)
@@ -69,6 +77,9 @@ def backup_novice(context: AppContext):
   source_btn.grid(row=1, column=0, padx=10, pady=5, sticky="n")
   source_desc = ttk.Label(button_frame, text="Here you can add folders to the archive", justify="left", wraplength=400)
   source_desc.grid(row=1, column=1, padx=10, sticky="w")
+  # reserve frame for tar progress bar
+  context.progress_frame = ttk.Frame(context.root)
+  context.progress_frame.pack(pady=5)
 
   # 3. folders from backup
   backup_folders_label = ttk.Label(context.root, text="Your source folders for backup -- press 'Remove' to remove from the list.")
@@ -91,11 +102,10 @@ def backup_novice(context: AppContext):
   back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
   home_btn = ttk.Button(bottom_frame, text="Home", width=20, command=lambda: home(context))
   home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-  backup_btn = ttk.Button(bottom_frame, text="Perform backup", width=20, command=lambda: backup.create_tar_archive(context))
+  backup_btn = ttk.Button(bottom_frame, text="Perform backup", width=20, command=lambda: backup.start_backup(context))
   backup_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
   next_btn = ttk.Button(bottom_frame, text="Next", width=20, command=lambda: media_novice(context))
   next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
-
   context.quit_button()
 
 def media_novice(context: AppContext):
@@ -104,6 +114,12 @@ def media_novice(context: AppContext):
   get_status(3, True, context)
   media_label = ttk.Label(context.root, text="Let's prepare your installation media", font=("Helvetica", 12))
   media_label.pack(pady=10) 
+  bottom_frame = ttk.Frame(context.root)
+  bottom_frame.pack(pady=10)
+  back_btn = ttk.Button(bottom_frame, text="Back", width=20, command=lambda: backup_novice(context))
+  back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+  home_btn = ttk.Button(bottom_frame, text="Home", width=20, command=lambda: home(context))
+  home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
   context.quit_button()
 
 def get_info(context: AppContext):
@@ -114,6 +130,8 @@ def get_info(context: AppContext):
   context.set_report_label("Now we are gathering software and hardware info")
 
   #  global progress 
+  context.progress_frame = ttk.Frame(context.root)
+  context.progress_frame.pack(pady=5)
   context.start_progress()
   report = Report()
   threading.Thread(target=lambda: report.get_info_thread(context), daemon=True).start()
@@ -134,6 +152,8 @@ def get_info(context: AppContext):
 def clear_screen(context: AppContext):
   for widget in context.root.winfo_children():
     widget.destroy()
+  context.report_label = None
+  context.source_size_label = None
 
 def launch_novice_mode(context: AppContext):
   context.set_root_title("LMTK: Are you familiar with Linux?")

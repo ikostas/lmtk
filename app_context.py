@@ -19,35 +19,38 @@ class AppContext():
     self.source_size = 0
     self.source_size_human = "0 B"
     self.view_button = None
-    self.compress = True
+    self.compress = False
+    self.source_size_label = None
+    self.report_label = None
 
   def set_source_folder_label(self):
     # change this to human-readable
     text = "Total source folder size is: " + self.source_size_human
-    if hasattr(self, "_source_size_label"):
-      self._source_size_label.config(text=text)
+    if getattr(self, "source_size_label", None):
+      self.source_size_label.config(text=text)
     else:
-      self._source_size_label = ttk.Label(self.root, text=text)
-      self._source_size_label.pack(pady=10)
+      self.source_size_label = ttk.Label(self.root, text=text)
+      self.source_size_label.pack(pady=10)
 
   def set_report_label(self, text):
-    if hasattr(self, "_report_label"):
-      self._report_label.config(text=text)
+    if getattr(self, "report_label", None):
+      self.report_label.config(text=text)
     else:
-      self._report_label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
-      self._report_label.pack(pady=10)
+      self.report_label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
+      self.report_label.pack(pady=10)
 
   def run(self):
     self._root.mainloop()
 
   def start_progress(self):
-    self.progress = ttk.Progressbar(self._root, mode="indeterminate")
+    self.progress = ttk.Progressbar(self.progress_frame, mode="indeterminate")
     self.progress.pack()
     self.progress.start()
 
   def stop_progress(self):
     self.progress.stop()
     self.progress.pack_forget()
+    del self.progress
 
   def set_root_title(self, title):
     self._root.title(title)
