@@ -41,7 +41,7 @@ class Backup():
   def add_folder(self, context: AppContext):
     folder = filedialog.askdirectory()
     folder = os.path.normpath(folder)
-    if folder and not any(f["path"] == folder for f in context.backup_input):
+    if folder and folder != "." and not any(f["path"] == folder for f in context.backup_input):
       self.add_folder_backend(folder, context)
       self.display_folder(context.backup_input[-1], context)
 
@@ -101,8 +101,28 @@ class Backup():
     return f"{total:.1f} PB"
 
   def start_backup(self, context: AppContext):
-    context.start_progress()
-    threading.Thread(target=lambda: self.create_tar_archive(context), daemon=True).start()
+    if getattr(context, "error_label", None):
+      context.error_label.destroy()
+      context.error_label = None
+    error_code = self.validate_backup_paths(context)
+    if error_code == 0:
+      context.start_progress()
+      threading.Thread(target=lambda: self.create_tar_archive(context), daemon=True).start()
+    else:
+      error_arr = [
+        "OK",
+        "No source folders selected",
+        "No destination folder selected",
+        "Destination is one of the input folders",
+        "One input folder is a subfolder of another input folder",
+        "Output is inside one of the input folders (cyclic backup)",
+      ]
+      text = "Error: " + error_arr[error_code]
+      if getattr(context, "error_label", None):
+        context.error_label.config(text=text)
+      else:
+        context.error_label = ttk.Label(context.progress_frame, text=text, font=("Helvetica", 12)) 
+        context.error_label.pack()
 
   def create_tar_archive(self, context: AppContext):
     if context.compress:
@@ -141,3 +161,30 @@ class Backup():
     finished_label = ttk.Label(context.progress_frame, text="Backup complete", font=("Helvetica", 12))
     finished_label.pack()
 
+  def validate_backup_paths(self, context):
+    input_paths = [(folder["path"]) for folder in context.backup_input]
+    output_path = context.backup_output if context.backup_output else None
+    # 1. No source folders selected
+    if not input_paths:
+      return 1  # No source folders
+
+    # 2. No destination folder selected
+    if not output_path:
+      return 2  # No destination
+
+    # 3. Output is one of the input folders
+    if output_path in input_paths:
+      return 3  # Destination is among sources
+
+    # 4. One input folder is a subfolder of another input folder
+    for i, path1 in enumerate(input_paths):
+      for j, path2 in enumerate(input_paths):
+        if i != j and path1.startswith(path2 + os.sep):
+          return 4  # One source folder is inside another
+
+    # 5. Output is inside one of the input folders (cyclic backup)
+    for source in input_paths:
+      if output_path.startswith(source + os.sep):
+        return 5  # Destination is inside source folder
+
+    return 0  # All good

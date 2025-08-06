@@ -22,6 +22,7 @@ class AppContext():
     self.compress = False
     self.source_size_label = None
     self.report_label = None
+    self.error_label = None
 
   def set_source_folder_label(self):
     # change this to human-readable
