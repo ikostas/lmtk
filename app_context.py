@@ -19,6 +19,7 @@ class AppContext():
     self.source_size = 0
     self.source_size_human = "0 B"
     self.view_button = None
+    self.compress = True
 
   def set_source_folder_label(self):
     # change this to human-readable

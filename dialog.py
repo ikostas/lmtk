@@ -80,9 +80,9 @@ def backup_novice(context: AppContext):
   if context.backup_input == []:
     for i in backup.get_default_folders():
       backup.add_folder_backend(i, context)
-  # if context.backup_input:
-  #  for folder in context.backup_input:
-  #    backup.display_folder(folder, context)
+  if context.backup_input:
+   for folder in context.backup_input:
+     backup.display_folder(folder, context)
 
   # 4. bottom buttons
   bottom_frame = ttk.Frame(context.root)
@@ -91,12 +91,10 @@ def backup_novice(context: AppContext):
   back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
   home_btn = ttk.Button(bottom_frame, text="Home", width=20, command=lambda: home(context))
   home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-  estimate_btn = ttk.Button(bottom_frame, text="Estimate size and time", width=20, command=lambda: open_link(f"https://google.com"))
-  estimate_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
-  backup_btn = ttk.Button(bottom_frame, text="Perform backup", width=20, command=lambda: open_link(f"https://google.com"))
-  backup_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
+  backup_btn = ttk.Button(bottom_frame, text="Perform backup", width=20, command=lambda: backup.create_tar_archive(context))
+  backup_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
   next_btn = ttk.Button(bottom_frame, text="Next", width=20, command=lambda: media_novice(context))
-  next_btn.grid(row=0, column=4, padx=10, pady=5, sticky="e")
+  next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
 
   context.quit_button()
 

@@ -4,6 +4,8 @@ import tkinter as tk # UI
 from tkinter import ttk, filedialog 
 import os
 import threading
+import tarfile
+import datetime
 
 class Backup():
   def __init__(self, context: AppContext):
@@ -37,22 +39,22 @@ class Backup():
 
   def add_folder(self, context: AppContext):
     folder = filedialog.askdirectory()
-    self.add_folder_backend(folder, context)
+    folder = os.path.normpath(folder)
+    if folder and not any(f["path"] == folder for f in context.backup_input):
+      self.add_folder_backend(folder, context)
+      self.display_folder(context.backup_input[-1], context)
 
   def add_folder_backend(self, folder, context: AppContext):
-    if folder and folder not in context.backup_input:
-      folder = os.path.normpath(folder)
-      folder_size = self.get_folder_size(folder)
-      folder_info = {
-        "path": folder,
-        "size_bytes": folder_size,
-        "size_human": self.get_size_hr(folder_size)
-        }
-      context.backup_input.append(folder_info)
-      context.source_size += folder_size
-      context.source_size_human = self.get_size_hr(context.source_size)
-      context.set_source_folder_label()
-      self.display_folder(folder_info, context)
+    folder_size = self.get_folder_size(folder)
+    folder_info = {
+      "path": folder,
+      "size_bytes": folder_size,
+      "size_human": self.get_size_hr(folder_size)
+      }
+    context.backup_input.append(folder_info)
+    context.source_size += folder_size
+    context.source_size_human = self.get_size_hr(context.source_size)
+    context.set_source_folder_label()
 
   def set_destination(self, destination_label, context: AppContext):
     folder = filedialog.askdirectory()
@@ -96,3 +98,31 @@ class Backup():
         return f"{total:.1f} {unit}"
       total /= 1024
     return f"{total:.1f} PB"
+
+  def is_junction(self, path):
+    try:
+      attrs = os.lstat(path).st_file_attributes
+      return bool(attrs & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+    except Exception:
+      return False
+
+  def create_tar_archive(self, context: AppContext):
+    if context.compress:
+      mode = "w:bz2"
+      extension = "tar.bz2"
+    else:
+      mode = "w"
+      extension = "tar"
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = os.path.join(context.backup_output, f"backup_{timestamp}.{extension}")
+
+    with tarfile.open(output_path, mode) as tar:
+      for folder_info in context.backup_input:
+        base_path = os.path.normpath(folder_info["path"])
+        arcname = os.path.basename(base_path.rstrip("\\/"))
+
+        try:
+          tar.add(base_path, arcname=arcname)
+        except (PermissionError, FileNotFoundError) as e:
+          print(f"Skipping {base_path}: {e}")
