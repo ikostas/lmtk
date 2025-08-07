@@ -43,7 +43,7 @@ def get_status(step_index, context: AppContext):
     steps = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
 
   status_frame = tk.Frame(context.root)
-  status_frame.pack(pady=10, anchor="n")
+  status_frame.pack(pady=0, anchor="n")
   for i, step in enumerate(steps):
     lbl_font = bold_font if i == step_index else normal_font
     label = ttk.Label(status_frame, text=step, font=lbl_font)
@@ -57,7 +57,7 @@ def media(context: AppContext):
   """
   Step 3. Prepare installation media
   """
-  context.root.title("Let's prepare your installation media")
+  context.root.title("LMTK: Let's prepare your installation media")
   context.clear_screen()
   get_status(3, context)
   context.gen_header("Let's prepare your installation media")
@@ -71,19 +71,27 @@ def backup(context: AppContext):
   """
   Step 2. Backup screen: create tar or tar.bz2 archive
   """
-  context.root.title("Let's back up your data")
+  context.root.title("LMTK: Let's back up your data")
   context.clear_screen()
   get_status(2, context)
   context.gen_header("Let's back up your data")
+  if context.novice_mode:
+    context.gen_label("""
+Some tips:
+1. Use an external drive with enough free space as the destination.
+2. You must have read access (as a Windows user) to all folders you want to back up.
+3. I’ve included some default folders, but it's your responsibility to add all folders that contain valuable data.
+Bonus tip: All your data in Windows will be erased after installing Linux. :) So make sure you select all source folders with important data.
+    """)
   backup = Backup(context)
 
   # reserve frame for tar progress bar
   context.progress_frame = ttk.Frame(context.root)
-  context.progress_frame.pack(pady=5)
+  context.progress_frame.pack()
 
   # 1. destination label
   context.destination_label = ttk.Label(context.root, text="Your current destination folder: " + backup.destination_folder)
-  context.destination_label.pack(pady=5, padx=30, anchor="center")
+  context.destination_label.pack(pady=0, padx=30, anchor="center")
   check_var = tk.BooleanVar(value=context.compress)
 
   def update_context(*args):
@@ -104,7 +112,7 @@ def backup(context: AppContext):
   context.gen_label("Your source folders for backup -- press 'Remove' to remove from the list.")
   context.set_source_folder_label()
   backup.folder_list_frame = ttk.Frame(context.root)
-  backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=5)
+  backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=0)
 
   if context.backup_input == []:
     for i in backup.get_default_folders():
@@ -131,7 +139,7 @@ def get_info(context: AppContext):
   context.clear_screen()
   get_status(1, context)
   context.progress_frame = ttk.Frame(context.root)
-  context.progress_frame.pack(pady=5)
+  context.progress_frame.pack(pady=0)
 
   if not context.report_generated:
     context.set_report_label("Now we are gathering software and hardware info")
@@ -158,7 +166,7 @@ def launch_novice_mode(context: AppContext):
   """
   context.root.title("LMTK: Are you familiar with Linux?")
   context.clear_screen()
-  context.gen_header("LMTK: Are you familiar with Linux?")
+  context.gen_header("Are you familiar with Linux?")
   get_status(0, context)
   text_frame = ttk.Frame(context.root)
   text_frame.pack(padx=20, pady=20, fill="x")
@@ -230,7 +238,7 @@ def home(context: AppContext):
   Display the first screen -- choose the mode
   """
   context.clear_screen()
-  context.root.title("Welcome to Linux Migration Toolkit!")
+  context.root.title("LMTK: Welcome to Linux Migration Toolkit!")
   context.gen_header("Welcome to Linux Migration Toolkit! Choose Your Mode")
 
   # general info

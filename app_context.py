@@ -46,7 +46,7 @@ class AppContext():
 
   def start_progress(self):
     self.progress = ttk.Progressbar(self.progress_frame, mode="indeterminate")
-    self.progress.pack()
+    self.progress.pack(pady=10)
     self.progress.start()
 
   def stop_progress(self):
@@ -111,7 +111,7 @@ class AppContext():
 
   def gen_choice(self, buttons):
     choice_frame = ttk.Frame(self.root)
-    choice_frame.pack(pady=10)
+    choice_frame.pack(pady=0)
     for idx, (label, func, description) in enumerate(buttons):
       btn = ttk.Button(choice_frame, text=label, width=20, command=lambda f=func: f(self))
       btn.grid(row=idx, column=0, padx=10, pady=5)
@@ -124,5 +124,5 @@ class AppContext():
 
   def gen_label(self, label):
     label= ttk.Label(self.root, text=label, wraplength=600)
-    label.pack(pady=5, padx=30, anchor="center")
+    label.pack(pady=0, padx=30, anchor="center")
 
