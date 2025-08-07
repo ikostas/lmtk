@@ -1,7 +1,7 @@
 
 # Linux Migration Toolkit Report
 
-*Generated on 2025-08-06 20:13:19*
+*Generated on 2025-08-07 23:06:53*
 
 ## What do I do with this information?
 
@@ -37,7 +37,7 @@ Helpful resources:
 - Microsoft Visual C++ 2019 X86 Minimum Runtime - 14.23.27820
 - Microsoft Visual C++ 2022 X64 Additional Runtime - 14.31.31103
 - Microsoft Visual C++ 2022 X64 Minimum Runtime - 14.31.31103
-- Oracle VirtualBox Guest Additions 7.1.4
+- Oracle VirtualBox Guest Additions 7.1.10
 - Python 3.13.5 Add to Path (64-bit)
 - Python 3.13.5 Core Interpreter (64-bit)
 - Python 3.13.5 Development Libraries (64-bit)
@@ -175,7 +175,7 @@ Helpful resources:
 
 ### Drives:
 
-- C: - Size: 79.26 GB, Free: 42.01 GB
+- C: - Size: 79.26 GB, Free: 42.09 GB
 
 ### GPU:
 

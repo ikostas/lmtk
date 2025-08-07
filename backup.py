@@ -57,12 +57,12 @@ class Backup():
     context.source_size_human = self.get_size_hr(context.source_size)
     context.set_source_folder_label()
 
-  def set_destination(self, destination_label, context: AppContext):
+  def set_destination(self, context: AppContext):
     folder = filedialog.askdirectory()
-    if folder: 
-      folder = os.path.normpath(folder)
+    folder = os.path.normpath(folder)
+    if folder and folder != "." and not any(f["path"] == folder for f in context.backup_input):
       context.backup_output = folder
-      destination_label.config(text="Your current destination folder: " + folder)
+      context.destination_label.config(text="Your current destination folder: " + folder)
 
   def display_folder(self, folder, context: AppContext):
     frame = ttk.Frame(self.folder_list_frame)
@@ -158,7 +158,7 @@ class Backup():
 
   def after_backup(self, context: AppContext):
     context.stop_progress()
-    finished_label = ttk.Label(context.progress_frame, text="Backup complete", font=("Helvetica", 12))
+    finished_label = ttk.Label(context.progress_frame, text="Backup complete, see log file for details", font=("Helvetica", 12))
     finished_label.pack()
 
   def validate_backup_paths(self, context):
@@ -166,25 +166,25 @@ class Backup():
     output_path = context.backup_output if context.backup_output else None
     # 1. No source folders selected
     if not input_paths:
-      return 1  # No source folders
+      return 1
 
     # 2. No destination folder selected
     if not output_path:
-      return 2  # No destination
+      return 2
 
     # 3. Output is one of the input folders
     if output_path in input_paths:
-      return 3  # Destination is among sources
+      return 3
 
     # 4. One input folder is a subfolder of another input folder
     for i, path1 in enumerate(input_paths):
       for j, path2 in enumerate(input_paths):
         if i != j and path1.startswith(path2 + os.sep):
-          return 4  # One source folder is inside another
+          return 4
 
     # 5. Output is inside one of the input folders (cyclic backup)
     for source in input_paths:
       if output_path.startswith(source + os.sep):
-        return 5  # Destination is inside source folder
+        return 5 
 
-    return 0  # All good
+    return 0

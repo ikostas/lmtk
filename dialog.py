@@ -10,12 +10,13 @@ from backup import Backup # define input/output folders and perform backup
 
 # On the top we have service functions
 # All the other function are steps
-# some steps have suffix _novice or _expert, other accept arguments for the same purpose
-
-def open_link(link):
-  webbrowser.open_new(link)
+# some steps have novice mode, the mode is in context 
 
 def is_powershell_installed():
+  """
+  Check if PowerShell is installed
+  All the commands are tested for PS v.5
+  """
   try:
     subprocess.run(
       ["powershell", "-Command", "Write-Output 'OK'"],
@@ -27,10 +28,16 @@ def is_powershell_installed():
   except (FileNotFoundError, subprocess.CalledProcessError):
     return False
 
-def get_status(step_index, isNovice, context: AppContext):
+def open_report(context: AppContext):
+  webbrowser.open_new(f"file://{os.path.abspath(context.html_report)}")
+
+def get_status(step_index, context: AppContext):
+  """
+  Display current step 
+  """
   normal_font = font.Font(family="Helvetica", size=11)
   bold_font = font.Font(family="Helvetica", size=11, weight="bold")
-  if isNovice:
+  if context.novice_mode:
     steps = ["0. Intro", "1. Gather Info", "2. Backup", "3. Prepare Media"]
   else:
     steps = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
@@ -39,24 +46,44 @@ def get_status(step_index, isNovice, context: AppContext):
   status_frame.pack(pady=10, anchor="n")
   for i, step in enumerate(steps):
     lbl_font = bold_font if i == step_index else normal_font
-    label = tk.Label(status_frame, text=step, font=lbl_font)
+    label = ttk.Label(status_frame, text=step, font=lbl_font)
     label.pack(side="left")
 
     if i < len(steps) - 1:
-      sep = tk.Label(status_frame, text=" > ", font=normal_font)
+      sep = ttk.Label(status_frame, text=" > ", font=normal_font)
       sep.pack(side="left")
 
-def backup_novice(context: AppContext):
-  context.set_root_title("Let's back up your data")
-  clear_screen(context)
-  get_status(2, True, context)
-  backup_label = ttk.Label(context.root, text="Let's back up your data", font=("Helvetica", 12))
-  backup_label.pack(pady=0) 
+def media(context: AppContext):
+  """
+  Step 3. Prepare installation media
+  """
+  context.root.title("Let's prepare your installation media")
+  context.clear_screen()
+  get_status(3, context)
+  context.gen_header("Let's prepare your installation media")
+  buttons = [
+    ("Back", backup),
+    ("Home", home),
+  ]
+  context.gen_bbuttons(buttons)
+
+def backup(context: AppContext):
+  """
+  Step 2. Backup screen: create tar or tar.bz2 archive
+  """
+  context.root.title("Let's back up your data")
+  context.clear_screen()
+  get_status(2, context)
+  context.gen_header("Let's back up your data")
   backup = Backup(context)
 
+  # reserve frame for tar progress bar
+  context.progress_frame = ttk.Frame(context.root)
+  context.progress_frame.pack(pady=5)
+
   # 1. destination label
-  destination_label = ttk.Label(context.root, text="Your current destination folder: " + backup.destination_folder)
-  destination_label.pack(pady=0, padx=10, anchor="center")
+  context.destination_label = ttk.Label(context.root, text="Your current destination folder: " + backup.destination_folder)
+  context.destination_label.pack(pady=5, padx=30, anchor="center")
   check_var = tk.BooleanVar(value=context.compress)
 
   def update_context(*args):
@@ -67,23 +94,14 @@ def backup_novice(context: AppContext):
   checkbox.pack(pady=0, padx=10, anchor="center")
 
   # 2. button_frame: set destination, add source
-  button_frame = ttk.Frame(context.root)
-  button_frame.pack(pady=5)
-  destination_btn = ttk.Button(button_frame, text="Set destination", width=20, command=lambda: backup.set_destination(destination_label, context))
-  destination_btn.grid(row=0, column=0, padx=10, pady=5, sticky="n")
-  destination_desc = ttk.Label(button_frame, text="Here you set the folder, where to put your archive", justify="left", wraplength=400)
-  destination_desc.grid(row=0, column=1, padx=10, sticky="w")
-  source_btn = ttk.Button(button_frame, text="Add source folder", width=20, command=lambda: backup.add_folder(context))
-  source_btn.grid(row=1, column=0, padx=10, pady=5, sticky="n")
-  source_desc = ttk.Label(button_frame, text="Here you can add folders to the archive", justify="left", wraplength=400)
-  source_desc.grid(row=1, column=1, padx=10, sticky="w")
-  # reserve frame for tar progress bar
-  context.progress_frame = ttk.Frame(context.root)
-  context.progress_frame.pack(pady=5)
+  choice_buttons = [
+    ("Set destination", backup.set_destination, "Here you set the folder, where to put your archive"),
+    ("Add source folder", backup.add_folder, "Here you can add folders to the archive")
+  ]
+  context.gen_choice(choice_buttons)
 
   # 3. folders from backup
-  backup_folders_label = ttk.Label(context.root, text="Your source folders for backup -- press 'Remove' to remove from the list.")
-  backup_folders_label.pack(pady=5, padx=30, anchor="center")
+  context.gen_label("Your source folders for backup -- press 'Remove' to remove from the list.")
   context.set_source_folder_label()
   backup.folder_list_frame = ttk.Frame(context.root)
   backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=5)
@@ -96,73 +114,54 @@ def backup_novice(context: AppContext):
      backup.display_folder(folder, context)
 
   # 4. bottom buttons
-  bottom_frame = ttk.Frame(context.root)
-  bottom_frame.pack(pady=10)
-  back_btn = ttk.Button(bottom_frame, text="Back", width=20, command=lambda: get_info(context))
-  back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-  home_btn = ttk.Button(bottom_frame, text="Home", width=20, command=lambda: home(context))
-  home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-  backup_btn = ttk.Button(bottom_frame, text="Perform backup", width=20, command=lambda: backup.start_backup(context))
-  backup_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
-  next_btn = ttk.Button(bottom_frame, text="Next", width=20, command=lambda: media_novice(context))
-  next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
-  context.quit_button()
-
-def media_novice(context: AppContext):
-  context.set_root_title("Let's prepare your installation media")
-  clear_screen(context)
-  get_status(3, True, context)
-  media_label = ttk.Label(context.root, text="Let's prepare your installation media", font=("Helvetica", 12))
-  media_label.pack(pady=10) 
-  bottom_frame = ttk.Frame(context.root)
-  bottom_frame.pack(pady=10)
-  back_btn = ttk.Button(bottom_frame, text="Back", width=20, command=lambda: backup_novice(context))
-  back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-  home_btn = ttk.Button(bottom_frame, text="Home", width=20, command=lambda: home(context))
-  home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-  context.quit_button()
+  buttons = [
+    ("Back", get_info),
+    ("Home", home),
+    ("Perform backup", backup.start_backup),
+    ("Next", media)
+  ]
+  context.gen_bbuttons(buttons)
 
 def get_info(context: AppContext):
+  """
+  Step 1. Create report re hardware and installed software
+  """
   # Add some text here for novice: what we do, what to do next -- add argument to a function
-  context.set_root_title("Gathering software and hardware info")
-  clear_screen(context)
-  get_status(1, True, context)
-  context.set_report_label("Now we are gathering software and hardware info")
-
-  #  global progress 
+  context.root.title("Gathering software and hardware info")
+  context.clear_screen()
+  get_status(1, context)
   context.progress_frame = ttk.Frame(context.root)
   context.progress_frame.pack(pady=5)
-  context.start_progress()
-  report = Report()
-  threading.Thread(target=lambda: report.get_info_thread(context), daemon=True).start()
 
-  frame = ttk.Frame(context.root)
-  frame.pack(pady=10)
-  context.view_btn = ttk.Button(frame, text="View report", width=30, command=lambda: open_link(f"file://{os.path.abspath(context.html_report)}"))
-  context.view_btn.grid(row=0, column=2, padx=10, pady=5, sticky="e")
-  context.view_btn.config(state="disabled")
-  back_btn = ttk.Button(frame, text="Back", width=30, command=lambda: launch_novice_mode(context))
-  back_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-  home_btn = ttk.Button(frame, text="Home", width=30, command=lambda: home(context))
-  home_btn.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-  next_btn = ttk.Button(frame, text="Next", width=30, command=lambda: backup_novice(context))
-  next_btn.grid(row=0, column=3, padx=10, pady=5, sticky="e")
-  context.quit_button()
+  if not context.report_generated:
+    context.set_report_label("Now we are gathering software and hardware info")
+    state = "disabled"
+    context.start_progress()
+    report = Report()
+    threading.Thread(target=lambda: report.get_info_thread(context), daemon=True).start()
+  else:
+    context.set_report_label("Finished gathering software and hardware info")
+    state = "normal"
 
-def clear_screen(context: AppContext):
-  for widget in context.root.winfo_children():
-    widget.destroy()
-  context.report_label = None
-  context.source_size_label = None
+  buttons = [
+    ("Back", launch_novice_mode),
+    ("Home", home),
+    ("View report", open_report),
+    ("Next", backup)
+  ]
+  context.gen_bbuttons(buttons)
+  context.view_btn.config(state=state)
 
 def launch_novice_mode(context: AppContext):
-  context.set_root_title("LMTK: Are you familiar with Linux?")
-  clear_screen(context)
-  intro_label = ttk.Label(context.root, text="LMTK: Are you familiar with Linux?", font=("Helvetica", 12))
-  intro_label.pack(pady=10) 
-  get_status(0, True, context)
+  """
+  Step 0, for novice mode only -- display some info with links
+  """
+  context.root.title("LMTK: Are you familiar with Linux?")
+  context.clear_screen()
+  context.gen_header("LMTK: Are you familiar with Linux?")
+  get_status(0, context)
   text_frame = ttk.Frame(context.root)
-  text_frame.pack(padx=20, pady=10, fill="x")
+  text_frame.pack(padx=20, pady=20, fill="x")
   text_frame.configure(height=200)  
   scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
   scrollbar.pack(side="right", fill="y")
@@ -193,7 +192,7 @@ When you click 'Next', we'll gather information about your software and hardware
   text.insert("1.0", guide_content)
   scrollbar.config(command=text.yview)
   text.tag_config("line_spacing", spacing3=6)  # spacing in pixels
-  text.tag_add("line_spacing", "1.0", "end")
+  # text.tag_add("line_spacing", "1.0", "end")
   text.config(state="disabled")
 
   links = [
@@ -208,65 +207,57 @@ When you click 'Next', we'll gather information about your software and hardware
   for tag, start, end, url in links:
     text.tag_add(tag, start, end)
     text.tag_config(tag, foreground="blue")
-    text.tag_bind(tag, "<Button-1>", lambda event, url=url: open_link(url))
+    text.tag_bind(tag, "<Button-1>", lambda event, url=url: webbrowser.open_new(url))
 
-  text.config(state=tk.DISABLED)
+  # text.config(state=tk.DISABLED)
 
   # buttons
-  button_frame = ttk.Frame(context.root)
-  button_frame.pack(padx=10, pady=10, anchor="center")
-  home_btn = ttk.Button(button_frame, text="Home", width=20, command=lambda: home(context))
-  home_btn.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-  next_btn = ttk.Button(button_frame, text="Next", width=20, command=lambda: get_info(context))
-  next_btn.grid(row=0, column=1, padx=10, pady=5, sticky="e")
-  context.quit_button()
+  buttons = [
+    ("Home", home),
+    ("Next", get_info)
+  ]
+  context.gen_bbuttons(buttons)
 
 def launch_expert_mode(context: AppContext):
-  print("Expert Mode selected")
+  """
+  Set context variable and start with step 1.
+  """
+  context.novice_mode = False
+  get_info(context)
 
 def home(context: AppContext):
-  clear_screen(context)
-  context.set_root_title("Welcome to Linux Migration Toolkit!")
-  home_label = ttk.Label(context.root, text="Welcome to Linux Migration Toolkit! Choose Your Mode", font=("Helvetica", 12))
-  home_label.pack(pady=10) 
+  """
+  Display the first screen -- choose the mode
+  """
+  context.clear_screen()
+  context.root.title("Welcome to Linux Migration Toolkit!")
+  context.gen_header("Welcome to Linux Migration Toolkit! Choose Your Mode")
 
   # general info
-  text_intro = "Welcome to the Linux Migration Toolkit for the desktop! This app gathers information about your installed programs and hardware for future use, helps you back up your data, and assists in preparing installation media using external tools."
-  intro_text = ttk.Label(context.root, text=text_intro, wraplength=600, justify="left")
-  intro_text.pack(padx=20, pady=20)
+  context.gen_label("Welcome to the Linux Migration Toolkit for the desktop! This app gathers information about your installed programs and hardware for future use, helps you back up your data, and assists in preparing installation media using external tools.")
 
   # buttons
-  frame = ttk.Frame(context.root)
-  frame.pack(pady=10)
-  novice_btn = ttk.Button(frame, text="Novice Mode", width=20, command=lambda: launch_novice_mode(context))
-  novice_btn.grid(row=0, column=0, padx=10, pady=5, sticky="n")
-  novice_desc = ttk.Label(frame, text="For each step you'll have useful guidance and links.\nAlso use it if you use this program for the first time.", justify="left", wraplength=400)
-  novice_desc.grid(row=0, column=1, padx=10, sticky="w")
-
-  expert_btn = ttk.Button(frame, text="Expert Mode", width=20, command=lambda: launch_expert_mode(context))
-  expert_btn.grid(row=1, column=0, padx=10, pady=5, sticky="n")
-  expert_desc = ttk.Label(frame, text="You know what the program does.", justify="left", wraplength=400)
-  expert_desc.grid(row=1, column=1, padx=10, sticky="w")
+  choice_buttons = [
+    ("Novice Mode", launch_novice_mode, "For each step you'll have useful guidance and links.\nAlso use it if you use this program for the first time."),
+    ("Expert Mode", launch_expert_mode, "You know what the program does.")
+  ]
+  context.gen_choice(choice_buttons)
 
   # PowerShell check
   text_ps_installed = "PowerShell is installed. We'll need it to do some stuff."
   text_ps_not_installed = "PowerShell is not installed. Please install it and restart the app."
 
   if is_powershell_installed():
-    ps_text = ttk.Label(context.root, text=text_ps_installed, wraplength=600, justify="left")
-    ps_text.pack(padx=20, pady=20)
+    context.gen_label(text_ps_installed)
   else:
-    ps_text = ttk.Label(context.root, text=text_ps_not_installed, wraplength=600, justify="left")
-    ps_text.pack(padx=20, pady=20)
-    novice_btn.config(state="disabled")
-    expert_btn.config(state="disabled")
+    context.gen_label(text_ps_not_installed)
+    context.btn_novice_mode.config(state="disabled")
+    context.btn_expert_mode.config(state="disabled")
 
   context.quit_button()
 
-  reddit_text = ttk.Label(context.root, text="Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my inspiration.", wraplength=600, justify="left")
-  reddit_text.pack(padx=20, pady=20)
+  context.gen_label("Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my inspiration.")
 
 context = AppContext()
 home(context)
 context.run()
-

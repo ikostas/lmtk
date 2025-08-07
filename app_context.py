@@ -4,9 +4,6 @@ import os
 
 class AppContext():
   def __init__(self):
-    self._root = tk.Tk()
-    self._root.geometry("900x800")
-    self._root.resizable(True, True)
     self._standard_apps_txt = "installed_standard_apps.txt"
     self._standard_apps_md = "cleaned_standard_apps.md"
     self._store_apps_txt = "installed_store_apps.txt"
@@ -14,15 +11,19 @@ class AppContext():
     self._hw_report_md = "hardware_info.md"
     self._md_report = "swhw_report.md"
     self._html_report = "swhw_report.html"
-    self._backup_input = [] # folders to backup
-    self._backup_output = None # where to put a backup
+    self.backup_input = [] # folders to backup
+    self.backup_output = None # where to put a backup
     self.source_size = 0
     self.source_size_human = "0 B"
-    self.view_button = None
     self.compress = False
     self.source_size_label = None
     self.report_label = None
     self.error_label = None
+    self.novice_mode = True
+    self.root = tk.Tk()
+    self.root.geometry("900x800")
+    self.root.resizable(True, True)
+    self.report_generated = False
 
   def set_source_folder_label(self):
     # change this to human-readable
@@ -41,7 +42,7 @@ class AppContext():
       self.report_label.pack(pady=10)
 
   def run(self):
-    self._root.mainloop()
+    self.root.mainloop()
 
   def start_progress(self):
     self.progress = ttk.Progressbar(self.progress_frame, mode="indeterminate")
@@ -53,28 +54,9 @@ class AppContext():
     self.progress.pack_forget()
     del self.progress
 
-  def set_root_title(self, title):
-    self._root.title(title)
-
   def quit_button(self):
     quit_button = ttk.Button(self.root, text="Quit", command=self.root.destroy)
     quit_button.pack(pady=10)
-
-  @property
-  def backup_input(self):
-    return self._backup_input
-
-  @property
-  def backup_output(self):
-    return self._backup_output
-
-  @backup_output.setter
-  def backup_output(self, value):
-    self._backup_output = value
-
-  @property
-  def root(self):
-    return self._root
 
   @property
   def standard_apps_txt(self):
@@ -103,4 +85,44 @@ class AppContext():
   @property
   def html_report(self):
     return self._html_report
+
+  def clear_screen(self):
+    """
+    Clear root window and empty some labels used
+    """
+    for widget in self.root.winfo_children():
+      widget.destroy()
+    self.report_label = None
+    self.source_size_label = None
+
+  def gen_header(self, text):
+    header_label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
+    header_label.pack(pady=10) 
+
+  def gen_bbuttons(self, buttons):
+    bb_frame = ttk.Frame(self.root)
+    bb_frame.pack(pady=10)
+    for idx, (label, func) in enumerate(buttons):
+      btn = ttk.Button(bb_frame, text=label, width=30, command=lambda f=func: f(self))
+      btn.grid(row=0, column=idx, padx=10)
+      if label == "View report":
+        self.view_btn = btn
+    self.quit_button()
+
+  def gen_choice(self, buttons):
+    choice_frame = ttk.Frame(self.root)
+    choice_frame.pack(pady=10)
+    for idx, (label, func, description) in enumerate(buttons):
+      btn = ttk.Button(choice_frame, text=label, width=20, command=lambda f=func: f(self))
+      btn.grid(row=idx, column=0, padx=10, pady=5)
+      desc = ttk.Label(choice_frame, text=description, justify="left", wraplength=400)
+      desc.grid(row=idx, column=1, padx=10, sticky="w")
+      if label == "Novice Mode":
+        self.btn_novice_mode = btn
+      elif label == "Expert Mode":
+        self.btn_expert_mode = btn
+
+  def gen_label(self, label):
+    label= ttk.Label(self.root, text=label, wraplength=600)
+    label.pack(pady=5, padx=30, anchor="center")
 
