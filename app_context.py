@@ -20,7 +20,13 @@ class AppContext():
     self.report_label = None
     self.error_label = None
     self.novice_mode = True
+    self.font_family = "Segoe UI" # A standard, modern Windows font.
+    self.padx = 30
     self.root = tk.Tk()
+    self.style = ttk.Style(self.root)
+    self.style.theme_use('vista')
+    self.style.configure('TCheckbutton', font=(self.font_family, 11))
+    self.root.configure(bg=self.style.lookup('TFrame', 'background'))
     self.root.geometry("900x800")
     self.root.resizable(True, True)
     self.report_generated = False
@@ -31,14 +37,14 @@ class AppContext():
     if getattr(self, "source_size_label", None):
       self.source_size_label.config(text=text)
     else:
-      self.source_size_label = ttk.Label(self.root, text=text)
-      self.source_size_label.pack(pady=10)
+      self.source_size_label = ttk.Label(self.root, text=text, font=(self.font_family, 11))
+      self.source_size_label.pack(pady=(10, 0), padx=self.padx, anchor="w")
 
   def set_report_label(self, text):
     if getattr(self, "report_label", None):
       self.report_label.config(text=text)
     else:
-      self.report_label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
+      self.report_label = ttk.Label(self.root, text=text, font=(self.font_family, 12))
       self.report_label.pack(pady=10)
 
   def run(self):
@@ -96,7 +102,7 @@ class AppContext():
     self.source_size_label = None
 
   def gen_header(self, text):
-    header_label = ttk.Label(self.root, text=text, font=("Helvetica", 12))
+    header_label = ttk.Label(self.root, text=text, font=(self.font_family, 14, "bold"))
     header_label.pack(pady=10) 
 
   def gen_bbuttons(self, buttons):
@@ -111,7 +117,7 @@ class AppContext():
 
   def gen_choice(self, buttons):
     choice_frame = ttk.Frame(self.root)
-    choice_frame.pack(pady=0)
+    choice_frame.pack(pady=0, padx=self.padx)
     for idx, (label, func, description) in enumerate(buttons):
       btn = ttk.Button(choice_frame, text=label, width=20, command=lambda f=func: f(self))
       btn.grid(row=idx, column=0, padx=10, pady=5)
@@ -123,22 +129,25 @@ class AppContext():
         self.btn_expert_mode = btn
 
   def gen_label(self, label):
-    label= ttk.Label(self.root, text=label, wraplength=600)
-    label.pack(pady=0, padx=30, anchor="center")
+    label = ttk.Label(self.root, text=label, font=(self.font_family, 11))
+    label.pack(pady=5, padx=self.padx, fill='x')
+    def update_wrap(event):
+        label.config(wraplength=event.width)
+    label.bind('<Configure>', update_wrap)
 
   def get_status(self, step_index):
     """
     Display current step 
     """
-    normal_font = font.Font(family="Helvetica", size=11)
-    bold_font = font.Font(family="Helvetica", size=11, weight="bold")
+    normal_font = font.Font(family=self.font_family, size=12)
+    bold_font = font.Font(family=self.font_family, size=12, weight="bold")
     if self.novice_mode:
       steps = ["0. Intro", "1. Gather Info", "2. Backup", "3. Prepare Media"]
     else:
       steps = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
 
     status_frame = tk.Frame(self.root)
-    status_frame.pack(pady=0, anchor="n")
+    status_frame.pack(pady=10, anchor="n")
     for i, step in enumerate(steps):
       lbl_font = bold_font if i == step_index else normal_font
       label = ttk.Label(status_frame, text=step, font=lbl_font)

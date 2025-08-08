@@ -66,13 +66,14 @@ class Backup():
 
   def display_folder(self, folder, context: AppContext):
     frame = ttk.Frame(self.folder_list_frame)
-    frame.pack(pady=2,padx=30, anchor="w")
+    frame.pack(pady=2,padx=context.padx, anchor="w", fill="x")
+    frame.columnconfigure(0, weight=1)
     label = ttk.Label(frame, text=f"{folder['path']} ({folder['size_human']})", anchor="w", justify="left")
     label.grid(row=0, column=0, sticky="w")
 
     remove_btn = ttk.Button(frame, text="Remove", width=10,
       command=lambda: self.remove_folder(folder, frame, context))
-    remove_btn.grid(row=0, column=1, sticky="w")
+    remove_btn.grid(row=0, column=1, sticky="e")
 
   def remove_folder(self, folder, frame, context: AppContext):
     if folder in context.backup_input:
@@ -121,7 +122,7 @@ class Backup():
       if getattr(context, "error_label", None):
         context.error_label.config(text=text)
       else:
-        context.error_label = ttk.Label(context.progress_frame, text=text, font=("Helvetica", 12)) 
+        context.error_label = ttk.Label(context.progress_frame, text=text, font=(context.font_family, 12)) 
         context.error_label.pack()
 
   def create_tar_archive(self, context: AppContext):

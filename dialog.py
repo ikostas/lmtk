@@ -67,17 +67,21 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   context.progress_frame = ttk.Frame(context.root)
   context.progress_frame.pack()
 
+  # Create a frame for the destination and compression widgets
+  dest_frame = ttk.Frame(context.root)
+  dest_frame.pack(pady=(10, 0), padx=context.padx, anchor="w")
+
   # 1. destination label
-  context.destination_label = ttk.Label(context.root, text="Your current destination folder: " + backup.destination_folder)
-  context.destination_label.pack(pady=0, padx=30, anchor="center")
+  context.destination_label = ttk.Label(dest_frame, text="Your current destination folder: " + backup.destination_folder, font=("Helvetica", 11))
+  context.destination_label.pack(pady=0, anchor="w")
   check_var = tk.BooleanVar(value=context.compress)
 
   def update_context(*args):
       context.compress = check_var.get()
 
   check_var.trace_add("write", update_context)
-  checkbox = ttk.Checkbutton(context.root, text="Enable compression", variable=check_var)
-  checkbox.pack(pady=0, padx=10, anchor="center")
+  checkbox = ttk.Checkbutton(dest_frame, text="Enable compression", variable=check_var)
+  checkbox.pack(padx=30, anchor="w")
 
   # 2. button_frame: set destination, add source
   choice_buttons = [
@@ -89,8 +93,29 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   # 3. folders from backup
   context.gen_label("Your source folders for backup -- press 'Remove' to remove from the list.")
   context.set_source_folder_label()
-  backup.folder_list_frame = ttk.Frame(context.root)
-  backup.folder_list_frame.pack(fill="both", expand=False, padx=10, pady=0)
+
+  # Create a scrollable area for the folder list
+  folder_list_container = ttk.Frame(context.root)
+  folder_list_container.pack(fill='x', expand=True, padx=context.padx)
+  bg_color = context.style.lookup('TFrame', 'background')
+  folder_canvas = tk.Canvas(folder_list_container, width=600, height=200, borderwidth=0, highlightthickness=0, bg=bg_color)
+  folder_scrollbar = ttk.Scrollbar(folder_list_container, orient="vertical", command=folder_canvas.yview)
+  scrollable_frame = ttk.Frame(folder_canvas)
+
+  scrollable_frame.bind(
+      "<Configure>",
+      lambda e: folder_canvas.configure(
+          scrollregion=folder_canvas.bbox("all")
+      )
+  )
+
+  folder_canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+  folder_canvas.configure(yscrollcommand=folder_scrollbar.set)
+
+  folder_canvas.pack(side="left", fill="both", expand=True)
+  folder_scrollbar.pack(side="right", fill="y")
+
+  backup.folder_list_frame = scrollable_frame # Assign the scrollable frame
 
   if context.backup_input == []:
     for i in backup.get_default_folders():
@@ -147,7 +172,7 @@ def launch_novice_mode(context: AppContext):
   context.gen_header("Are you familiar with Linux?")
   context.get_status(0)
   text_frame = ttk.Frame(context.root)
-  text_frame.pack(padx=20, pady=20, fill="x")
+  text_frame.pack(padx=30, pady=20, fill="x")
   text_frame.configure(height=200)  
   scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
   scrollbar.pack(side="right", fill="y")
@@ -173,11 +198,11 @@ Here are some links (all of them are LiveCDs, by the way):
 
 When you click 'Next', we'll gather information about your software and hardware, save it as Markdown (.md) and HTML (.html) reports for future use.
 """
-  text = tk.Text(text_frame, height=25, width=100, wrap="word", font=("Helvetica", 11), bd=0, bg=context.root.cget("bg"), relief="flat", highlightthickness=0, yscrollcommand=scrollbar.set)
+  text = tk.Text(text_frame, height=25, width=100, wrap="word", font=(context.font_family, 12), bd=0, bg=context.root.cget("bg"), relief="flat", highlightthickness=0, yscrollcommand=scrollbar.set)
   text.pack(side="left", fill="both", expand=True)
   text.insert("1.0", guide_content)
   scrollbar.config(command=text.yview)
-  text.tag_config("line_spacing", spacing3=6)  # spacing in pixels
+  text.tag_config("line_spacing", spacing3=8)  # spacing in pixels
   # text.tag_add("line_spacing", "1.0", "end")
   text.config(state="disabled")
 
