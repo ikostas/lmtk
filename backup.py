@@ -12,13 +12,14 @@ import threading
 import tarfile
 import datetime
 import logging
+from i18n import _
 
 class Backup():
   def __init__(self, context: AppContext):
     self.folder_list_frame = ttk.Frame(context.root)
     self.folder_list_frame.pack(padx=10, pady=10)
     if context.backup_output == None:
-      self.destination_folder = "No folder selected" 
+      self.destination_folder = _("No folder selected") 
     else:
       self.destination_folder = context.backup_output
 
@@ -67,7 +68,7 @@ class Backup():
     folder = os.path.normpath(folder)
     if folder and folder != "." and not any(f["path"] == folder for f in context.backup_input):
       context.backup_output = folder
-      context.destination_label.config(text="Your current destination folder: " + folder)
+      context.destination_label.config(text=_("Your current destination folder: ") + folder)
 
   def display_folder(self, folder, context: AppContext):
     frame = ttk.Frame(self.folder_list_frame)
@@ -76,7 +77,7 @@ class Backup():
     label = ttk.Label(frame, text=f"{folder['path']} ({folder['size_human']})", anchor="w", justify="left")
     label.grid(row=0, column=0, sticky="w")
 
-    remove_btn = ttk.Button(frame, text="Remove", width=10,
+    remove_btn = ttk.Button(frame, text=_("Remove"), width=10,
       command=lambda: self.remove_folder(folder, frame, context))
     remove_btn.grid(row=0, column=1, sticky="e")
 
@@ -116,12 +117,12 @@ class Backup():
       threading.Thread(target=lambda: self.create_tar_archive(context), daemon=True).start()
     else:
       error_arr = [
-        "OK",
-        "No source folders selected",
-        "No destination folder selected",
-        "Destination is one of the input folders",
-        "One input folder is a subfolder of another input folder",
-        "Output is inside one of the input folders (cyclic backup)",
+        _("OK"),
+        _("No source folders selected"),
+        _("No destination folder selected"),
+        _("Destination is one of the input folders"),
+        _("One input folder is a subfolder of another input folder"),
+        _("Output is inside one of the input folders (cyclic backup)"),
       ]
       text = "Error: " + error_arr[error_code]
       if getattr(context, "error_label", None):
@@ -158,13 +159,13 @@ class Backup():
         try:
           tar.add(base_path, arcname=arcname)
         except (PermissionError, FileNotFoundError) as e:
-          logging.error(f"Skipping {base_path}: {e}")
+          logging.error(f"{_("Skipping")} {base_path}: {e}")
 
     context.root.after(0, lambda: self.after_backup(context))
 
   def after_backup(self, context: AppContext):
     context.stop_progress()
-    finished_label = ttk.Label(context.progress_frame, text="Backup complete, see log file for details", font=("Helvetica", 12))
+    finished_label = ttk.Label(context.progress_frame, text=_("Backup complete, see log file for details"), font=("Helvetica", 12))
     finished_label.pack()
 
   def validate_backup_paths(self, context):

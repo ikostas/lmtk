@@ -7,6 +7,7 @@ import tkinter as tk # UI
 from tkinter import ttk, font # UI
 import os
 import webbrowser # open links in standard browser
+from i18n import _
 
 class AppContext():
   def __init__(self):
@@ -39,7 +40,7 @@ class AppContext():
 
   def set_source_folder_label(self):
     # Convert to human-readable format
-    text = "Total source folder size is: " + self.source_size_human
+    text = _("Total source folder size is: ") + self.source_size_human
     if getattr(self, "source_size_label", None):
       self.source_size_label.config(text=text)
     else:
@@ -67,7 +68,7 @@ class AppContext():
     del self.progress
 
   def quit_button(self):
-    quit_button = ttk.Button(self.root, text="Quit", command=self.root.destroy)
+    quit_button = ttk.Button(self.root, text=_("Quit"), command=self.root.destroy)
     quit_button.pack(pady=10)
 
   @property
@@ -117,7 +118,7 @@ class AppContext():
     for idx, (label, func) in enumerate(buttons):
       btn = ttk.Button(bb_frame, text=label, width=30, command=lambda f=func: f(self))
       btn.grid(row=0, column=idx, padx=10)
-      if label == "View report":
+      if label == _("View report"):
         self.view_btn = btn
     self.quit_button()
 
@@ -129,9 +130,9 @@ class AppContext():
       btn.grid(row=idx, column=0, padx=10, pady=5)
       desc = ttk.Label(choice_frame, text=description, justify="left", wraplength=400)
       desc.grid(row=idx, column=1, padx=10, sticky="w")
-      if label == "Novice Mode":
+      if label == _("Novice Mode"):
         self.btn_novice_mode = btn
-      elif label == "Expert Mode":
+      elif label == _("Expert Mode"):
         self.btn_expert_mode = btn
 
   def gen_label(self, label):
@@ -148,9 +149,9 @@ class AppContext():
     normal_font = font.Font(family=self.font_family, size=12)
     bold_font = font.Font(family=self.font_family, size=12, weight="bold")
     if self.novice_mode:
-      steps = ["0. Intro", "1. Gather Info", "2. Backup", "3. Prepare Media"]
+      steps = [_("0. Intro"), _("1. Gather Info"), _("2. Backup"), _("3. Prepare Media")]
     else:
-      steps = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
+      steps = [_("1. Gather Info"), _("2. Backup"), _("3. Prepare Media")]
 
     status_frame = tk.Frame(self.root)
     status_frame.pack(pady=10, anchor="n")

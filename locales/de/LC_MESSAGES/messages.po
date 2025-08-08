@@ -1,0 +1,487 @@
+# LMTK creates report about hardware and software in windows, backs up data and displays info about creating installation media
+# Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info
+# This file is part of LMTK, licensed under the GNU GPLv3 or later.
+# See the LICENSE file or <https://www.gnu.org/licenses/> for details.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-08 20:54+0200\n"
+"PO-Revision-Date: 2025-08-08 19:11+0200\n"
+"Last-Translator: Konstantin Ovchinnikov <k@kovchinnikov.info>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app_context.py:43
+msgid "Total source folder size is: "
+msgstr "Gesamtgröße des Quellordners: "
+
+#: app_context.py:71
+msgid "Quit"
+msgstr "Beenden"
+
+#: app_context.py:121 dialog.py:215
+msgid "View report"
+msgstr "Bericht anzeigen"
+
+#: app_context.py:133 dialog.py:295
+msgid "Novice Mode"
+msgstr "Anfängermodus"
+
+#: app_context.py:135 dialog.py:296
+msgid "Expert Mode"
+msgstr "Expertenmodus"
+
+#: app_context.py:152
+msgid "0. Intro"
+msgstr "0. Einführung"
+
+#: app_context.py:152 app_context.py:154
+msgid "1. Gather Info"
+msgstr "1. Informationen sammeln"
+
+#: app_context.py:152 app_context.py:154
+msgid "2. Backup"
+msgstr "2. Backup"
+
+#: app_context.py:152 app_context.py:154
+msgid "3. Prepare Media"
+msgstr "3. Installationsmedien vorbereiten"
+
+#: backup.py:22
+msgid "No folder selected"
+msgstr "Kein Ordner ausgewählt"
+
+#: backup.py:71 dialog.py:122
+msgid "Your current destination folder: "
+msgstr "Ihr aktueller Zielordner: "
+
+#: backup.py:80
+msgid "Remove"
+msgstr "Entfernen"
+
+#: backup.py:120
+msgid "OK"
+msgstr "OK"
+
+#: backup.py:121
+msgid "No source folders selected"
+msgstr "Keine Quellordner ausgewählt"
+
+#: backup.py:122
+msgid "No destination folder selected"
+msgstr "Kein Zielordner ausgewählt"
+
+#: backup.py:123
+msgid "Destination is one of the input folders"
+msgstr "Ziel ist einer der Eingabeordner"
+
+#: backup.py:124
+msgid "One input folder is a subfolder of another input folder"
+msgstr "Ein Eingabeordner ist ein Unterordner eines anderen Eingabeordners"
+
+#: backup.py:125
+msgid "Output is inside one of the input folders (cyclic backup)"
+msgstr "Ausgabe befindet sich in einem der Eingabeordner (zyklische Backup)"
+
+#: backup.py:162
+msgid "Skipping"
+msgstr "Übersprungen"
+
+#: backup.py:168
+msgid "Backup complete, see log file for details"
+msgstr "Backup abgeschlossen, Details finden Sie in der Protokolldatei"
+
+#: dialog.py:38 dialog.py:40
+msgid "Let's prepare your installation media"
+msgstr "Bereiten wir Ihre Installationsmedien vor"
+
+#: dialog.py:45
+msgid ""
+"Here's what you should do next:\n"
+"1. Download linux ISO and media writer\n"
+"2. Launch media writer, write ISO to a USB-stick\n"
+"3. Reboot, enter BIOS/UEFI, set USB-stick as a first boot device and turn "
+"off Secure Boot option\n"
+"\n"
+"I'd recommend the following options for media writers:\n"
+"- balenaEtcher\n"
+"- Rufus\n"
+"- UNetbootin\n"
+"\n"
+"There's a thorough guide for using Rufus with Ubuntu:\n"
+"- Ubuntu Wiki"
+msgstr ""
+"Hier ist, was Sie als Nächstes tun sollten:\n"
+"1. Linux-ISO und Media Writer herunterladen\n"
+"2. Media Writer starten, ISO auf einen USB-Stick schreiben\n"
+"3. Neustarten, BIOS/UEFI aufrufen, USB-Stick als erstes Boot-Gerät festlegen "
+"und die Option 'Secure Boot' deaktivieren\n"
+"\n"
+"Ich würde die folgenden Optionen für Media Writer empfehlen:\n"
+"- balenaEtcher\n"
+"- Rufus\n"
+"- UNetbootin\n"
+"\n"
+"Es gibt eine ausführliche Anleitung zur Verwendung von Rufus mit Ubuntu:\n"
+"- Ubuntu Wiki"
+
+#: dialog.py:68
+msgid ""
+"You know the drill: write your ISO to a USB stick and boot into a Linux "
+"installation. Here are some media writer options:\n"
+"- balenaEtcher, Rufus, UNetbootin as standard options\n"
+"- Ventroy to experiment with several ISOs\n"
+"\n"
+"Have fun!\n"
+msgstr ""
+"Sie wissen, was zu tun ist: Schreiben Sie Ihr ISO auf einen USB-Stick und "
+"starten Sie eine Linux-Installation. Hier sind einige Optionen für Media "
+"Writer:\n"
+"- balenaEtcher, Rufus, UNetbootin als Standardoptionen\n"
+"- Ventroy zum Experimentieren mit mehreren ISOs\n"
+"\n"
+"Viel Spaß!\n"
+
+#: dialog.py:84 dialog.py:176 dialog.py:213
+msgid "Back"
+msgstr "Zurück"
+
+#: dialog.py:85 dialog.py:177 dialog.py:214 dialog.py:270
+msgid "Home"
+msgstr "Startseite"
+
+#: dialog.py:94 dialog.py:96
+msgid "Let's back up your data"
+msgstr "Lassen Sie uns ein Backup Ihrer Daten erstellen"
+
+#: dialog.py:101
+msgid ""
+"Some tips:\n"
+"1. Use an external drive with enough free space as the destination.\n"
+"2. You must have read access (as a Windows user) to all folders you want to "
+"back up.\n"
+"3. I've included some default folders, but it's your responsibility to add "
+"all folders that contain valuable data.\n"
+"Bonus tip: All your data in Windows will be erased after installing "
+"Linux. :) So make sure you select all source folders with important data.    "
+msgstr ""
+"Einige Tipps:\n"
+"1. Verwenden Sie eine externe Festplatte mit ausreichend freiem "
+"Speicherplatz als Ziel.\n"
+"2. Sie müssen (als Windows-Benutzer) Lesezugriff auf alle Ordner haben, die "
+"Sie sichern möchten.\n"
+"3. Ich habe einige Standardordner hinzugefügt, aber es liegt in Ihrer "
+"Verantwortung, alle Ordner mit wichtigen Daten hinzuzufügen.\n"
+"Bonus-Tipp: Alle Ihre Daten in Windows werden nach der Installation von "
+"Linux gelöscht. :) Stellen Sie also sicher, dass Sie alle Quellordner mit "
+"wichtigen Daten auswählen."
+
+#: dialog.py:109
+msgid ""
+"Choose your folders to back up, and I'll create an archive in destination "
+"folder."
+msgstr "Wählen Sie Ihre Ordner aus, und ich erstelle ein Archiv im Zielordner."
+
+#: dialog.py:130
+msgid "Enable compression"
+msgstr "Komprimierung aktivieren"
+
+#: dialog.py:135
+msgid "Set destination"
+msgstr "Ziel festlegen"
+
+#: dialog.py:135
+msgid "Here you set the folder, where to put your archive"
+msgstr "Hier legen Sie den Ordner fest, in dem Ihr Archiv abgelegt werden soll"
+
+#: dialog.py:136
+msgid "Add source folder"
+msgstr "Quellordner hinzufügen"
+
+#: dialog.py:136
+msgid "Here you can add folders to the archive"
+msgstr "Hier können Sie Ordner zum Archiv hinzufügen"
+
+#: dialog.py:141
+msgid ""
+"Your source folders for backup - press 'Remove' to remove from the list."
+msgstr ""
+"Ihre Quellordner für die Sicherung - drücken Sie 'Entfernen', um sie aus der "
+"Liste zu entfernen."
+
+#: dialog.py:178
+msgid "Perform backup"
+msgstr "Backup durchführen"
+
+#: dialog.py:179 dialog.py:216 dialog.py:271
+msgid "Next"
+msgstr "Weiter"
+
+#: dialog.py:189
+msgid "Gathering software and hardware info"
+msgstr "Sammeln von Software- und Hardware-Informationen"
+
+#: dialog.py:191
+msgid "Let's gather some info about your hardware and software"
+msgstr "Sammeln wir Informationen über Ihre Hardware und Software"
+
+#: dialog.py:195
+msgid ""
+"This is a very important step: we save information about your hardware "
+"configuration and installed software as HTML and Markdown for future use. "
+"Press 'View report' when it's ready — the report includes instructions and "
+"some useful links as well."
+msgstr ""
+"Dies ist ein sehr wichtiger Schritt: Wir speichern Informationen über Ihre "
+"Hardwarekonfiguration und installierte Software als HTML und Markdown für "
+"die zukünftige Verwendung. Drücken Sie 'Bericht anzeigen', wenn er fertig "
+"ist – der Bericht enthält auch Anweisungen und einige nützliche Links."
+
+#: dialog.py:197
+msgid ""
+"Press 'View report' when it's ready — the report includes the collected "
+"information, instructions, and some useful links. A Markdown version is also "
+"included."
+msgstr ""
+"Drücken Sie 'Bericht anzeigen', wenn er fertig ist – der Bericht enthält die "
+"gesammelten Informationen, Anweisungen und einige nützliche Links. Eine "
+"Markdown-Version ist ebenfalls enthalten."
+
+#: dialog.py:203
+msgid "Now we are gathering software and hardware info"
+msgstr "Wir sammeln jetzt Software- und Hardware-Informationen"
+
+#: dialog.py:209 report.py:257
+msgid "Finished gathering software and hardware info"
+msgstr "Sammeln von Software- und Hardware-Informationen abgeschlossen"
+
+#: dialog.py:229 dialog.py:231
+msgid "Are you familiar with Linux?"
+msgstr "Sind Sie mit Linux vertraut?"
+
+#: dialog.py:234
+msgid ""
+"So, you're going to install Linux. But are you familiar with Linux?\n"
+"\n"
+"If not, there are some resources to help you master it without too much "
+"risk:\n"
+"- Git for Windows -- includes bash and core command-line utilities, as well "
+"as vim text editor.\n"
+"- VirtualBox -- you'll be able to install and play with any Linux "
+"distribution you like in a sandbox.\n"
+"- LiveCD -- you'll be able to boot into Linux and at least check if your "
+"hardware works.\n"
+"\n"
+"The most common question is 'What distribution should I use?'\n"
+"Well, I'd recommend Ubuntu or Fedora to have a pleasant start.\n"
+"\n"
+"The next question is 'What desktop environment should I use?'\n"
+"I'd recommend Gnome if you have enough memory or XFCE, if you don't. :)\n"
+"\n"
+"Here are some links (all of them include LiveCDs, by the way):\n"
+"- Fedora (Gnome-based)\n"
+"- Fedora XFCE\n"
+"- Ubuntu (Gnome-based)\n"
+"- Ubuntu XFCE\n"
+"\n"
+"When you click 'Next', we'll gather information about your software and "
+"hardware, save it as Markdown (.md) and HTML (.html) reports for future use."
+msgstr ""
+"Sie werden also Linux installieren. Aber sind Sie mit Linux vertraut?\n"
+"\n"
+"Falls nicht, gibt es einige Ressourcen, die Ihnen helfen, es ohne zu großes "
+"Risiko zu meistern:\n"
+"- Git for Windows -- enthält Bash und grundlegende Befehlszeilen-"
+"Dienstprogramme sowie den Vim-Texteditor.\n"
+"- VirtualBox -- Sie können jede gewünschte Linux-Distribution in einer "
+"Sandbox installieren und ausprobieren.\n"
+"- LiveCD -- Sie können Linux booten und zumindest überprüfen, ob Ihre "
+"Hardware funktioniert.\n"
+"\n"
+"Die häufigste Frage ist: 'Welche Distribution soll ich verwenden?'\n"
+"Nun, ich würde Ubuntu oder Fedora für einen angenehmen Start empfehlen.\n"
+"\n"
+"Die nächste Frage ist: 'Welche Desktop-Umgebung soll ich verwenden?'\n"
+"Ich würde Gnome empfehlen, wenn Sie genügend Arbeitsspeicher haben, oder "
+"XFCE, wenn nicht. :)\n"
+"\n"
+"Hier sind einige Links (alle enthalten übrigens LiveCDs):\n"
+"- Fedora (Gnome-basiert)\n"
+"- Fedora XFCE\n"
+"- Ubuntu (Gnome-basiert)\n"
+"- Ubuntu XFCE\n"
+"\n"
+"Wenn Sie auf 'Weiter' klicken, sammeln wir Informationen über Ihre Software "
+"und Hardware und speichern diese als Markdown (.md) und HTML (.html) "
+"Berichte für die zukünftige Verwendung."
+
+#: dialog.py:287
+msgid "LMTK: Welcome to Linux Migration Toolkit!"
+msgstr "LMTK: Willkommen beim Linux Migration Toolkit!"
+
+#: dialog.py:288
+msgid "Welcome to Linux Migration Toolkit! Choose Your Mode"
+msgstr "Willkommen beim Linux Migration Toolkit! Wählen Sie Ihren Modus"
+
+#: dialog.py:291
+msgid ""
+"Welcome to the Linux Migration Toolkit for the desktop! This app gathers "
+"information about your installed programs and hardware for future use, helps "
+"you back up your data, and assists in preparing installation media using "
+"external tools."
+msgstr ""
+"Willkommen beim Linux Migration Toolkit für den Desktop! Diese App sammelt "
+"Informationen über Ihre installierten Programme und Hardware für die "
+"zukünftige Verwendung, hilft Ihnen beim Sichern Ihrer Daten und unterstützt "
+"Sie bei der Vorbereitung von Installationsmedien mit externen Tools."
+
+#: dialog.py:295
+msgid ""
+"For each step you'll have useful guidance and links.\n"
+"Also use it if you use this program for the first time."
+msgstr ""
+"Für jeden Schritt erhalten Sie nützliche Anleitungen und Links.\n"
+"Verwenden Sie es auch, wenn Sie dieses Programm zum ersten Mal verwenden."
+
+#: dialog.py:296
+msgid "You know what the program does."
+msgstr "Sie wissen, was das Programm tut."
+
+#: dialog.py:301
+msgid "PowerShell is installed. We'll need it to do some stuff."
+msgstr "PowerShell ist installiert. Wir werden es für einige Dinge benötigen."
+
+#: dialog.py:302
+msgid "PowerShell is not installed. Please install it and restart the app."
+msgstr ""
+"PowerShell ist nicht installiert. Bitte installieren Sie es und starten Sie "
+"die App neu."
+
+#: dialog.py:313
+msgid ""
+"Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my "
+"inspiration."
+msgstr ""
+"Vielen Dank an alle Jungs und Mädels auf reddit.com/r/linuxsucks/, ihr seid "
+"meine Inspiration."
+
+#: report.py:31 report.py:53
+msgid "Linux Migration Toolkit Report"
+msgstr "Linux Migration Toolkit Bericht"
+
+#: report.py:56 report.py:82
+msgid "Standard Applications"
+msgstr "Standardanwendungen"
+
+#: report.py:57 report.py:83
+msgid "Microsoft Store Applications"
+msgstr "Microsoft Store Anwendungen"
+
+#: report.py:58 report.py:84
+msgid "Hardware Information"
+msgstr "Hardware-Informationen"
+
+#: report.py:66
+msgid "Generated on"
+msgstr "Generiert am"
+
+#: report.py:68
+msgid "What do I do with this information?"
+msgstr "Was mache ich mit diesen Informationen?"
+
+#: report.py:70
+msgid "You can use this report to"
+msgstr "Sie können diesen Bericht verwenden, um"
+
+#: report.py:72
+msgid "Check your hardware's compatibility with Linux"
+msgstr "Die Kompatibilität Ihrer Hardware mit Linux überprüfen"
+
+#: report.py:73
+msgid "Find Linux alternatives for the Windows programs you currently use"
+msgstr "Linux-Alternativen für die derzeit verwendeten Windows-Programme finden"
+
+#: report.py:75
+msgid "Helpful resources"
+msgstr "Hilfreiche Ressourcen"
+
+#: report.py:78
+msgid "Linux software equivalents to Windows software"
+msgstr "Linux-Software-Äquivalente zu Windows-Software"
+
+#: report.py:80
+msgid "Table of Contents"
+msgstr "Inhaltsverzeichnis"
+
+#: report.py:82
+msgid ""
+"these apps are installed, when you download and installation file and launch "
+"it"
+msgstr ""
+"Diese Apps werden installiert, wenn Sie eine Installationsdatei "
+"herunterladen und ausführen."
+
+#: report.py:83
+msgid "these are the apps, installed from Microsoft Store"
+msgstr "Dies sind die Apps, die aus dem Microsoft Store installiert wurden."
+
+#: report.py:84
+msgid "some basic information about your system"
+msgstr "Einige grundlegende Informationen über Ihr System"
+
+#: report.py:97 report.py:216
+msgid "Error deleting"
+msgstr "Fehler beim Löschen"
+
+#: report.py:110 report.py:138 report.py:144 report.py:152
+msgid "Name"
+msgstr "Name"
+
+#: report.py:111
+msgid "Number of Cores"
+msgstr "Anzahl der Kerne"
+
+#: report.py:121
+msgid "Drives"
+msgstr "Festplatten"
+
+#: report.py:125
+msgid "Size"
+msgstr "Größe"
+
+#: report.py:125
+msgid "Free"
+msgstr "Frei"
+
+#: report.py:136
+msgid "Network Adapters:"
+msgstr "Netzwerkadapter:"
+
+#: report.py:138
+msgid "Connection ID"
+msgstr "Verbindungs-ID"
+
+#: report.py:138
+msgid "Type"
+msgstr "Typ"
+
+#: report.py:142
+msgid "Printers"
+msgstr "Drucker"
+
+#: report.py:144
+msgid "Port"
+msgstr "Anschluss"
+
+#: report.py:148
+msgid "Scanners"
+msgstr "Scanner"
+
+#: report.py:154
+msgid "No devices found"
+msgstr "Keine Geräte gefunden"

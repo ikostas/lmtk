@@ -3,6 +3,7 @@
 # This file is part of LMTK, licensed under the GNU GPLv3 or later.
 # See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
+from i18n import _
 import os # remove old files
 from tkinter import ttk
 import pythoncom # for hardware detection
@@ -27,7 +28,7 @@ class Report():
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Linux Migration Toolkit Report</title>
+  <title>{_('Linux Migration Toolkit Report')}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 </head>
 <body>
@@ -43,17 +44,18 @@ class Report():
       f.write(full_html)
 
   def get_hwsw_report(self, context: AppContext):
+    from i18n import _
     file1 = context.standard_apps_md
     file2 = context.store_apps_md
     file3 = context.hw_report_md
     output_file = context.md_report
     # Titles
-    main_title = "# Linux Migration Toolkit Report"
+    main_title = f"# {_('Linux Migration Toolkit Report')}"
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sections = [
-      ("## Standard Applications", file1),
-      ("## Microsoft Store Applications", file2),
-      ("## Hardware Information", file3),
+      (f"## {_('Standard Applications')}", file1),
+      (f"## {_('Microsoft Store Applications')}", file2),
+      (f"## {_('Hardware Information')}", file3),
   ]
 
     # Combine files into one markdown report
@@ -61,25 +63,25 @@ class Report():
       out.write(f"""
 {main_title}
 
-*Generated on {timestamp}*
+*{_('Generated on')} {timestamp}*
 
-## What do I do with this information?
+## {_('What do I do with this information?')}
 
-You can use this report to:
+{_('You can use this report to')}:
 
-- Check your hardware's compatibility with Linux.
-- Find Linux alternatives for the Windows programs you currently use.
+- {_('Check your hardware\'s compatibility with Linux')}.
+- {_('Find Linux alternatives for the Windows programs you currently use')}.
 
-Helpful resources:
+{_('Helpful resources')}:
 
 - [Ubuntu Hardware Support Wiki](https://wiki.ubuntu.com/HardwareSupport)
-- [Linux software equivalents to Windows software](https://wiki.linuxquestions.org/wiki/Linux_software_equivalent_to_Windows_software)\n\n
+- [{_('Linux software equivalents to Windows software')}](https://wiki.linuxquestions.org/wiki/Linux_software_equivalent_to_Windows_software)\n\n
 
-## Table of Contents
+## {_('Table of Contents')}
 
-- [Standard Applications](#standard-applications) &dash; these apps are installed, when you download and installation file and launch it
-- [Microsoft Store Applications](#microsoft-store-applications) &dash; these are the apps, installed from Microsoft Store
-- [Hardware Information](#hardware-information) &dash; some basic information about your system: CPU, GPU, RAM, HDD/SSD\n
+- [{_('Standard Applications')}](#standard-applications) &dash; {_('these apps are installed, when you download and installation file and launch it')}
+- [{_('Microsoft Store Applications')}](#microsoft-store-applications) &dash; {_('these are the apps, installed from Microsoft Store')}
+- [{_('Hardware Information')}](#hardware-information) &dash; {_('some basic information about your system')}: CPU, GPU, RAM, HDD/SSD\n
 """)
 
       for header, filename in sections:
@@ -92,7 +94,7 @@ Helpful resources:
       try:
         os.remove(filename)
       except OSError as e:
-        print(f"Error deleting {filename}: {e}")
+        print(f"{_('Error deleting')} {filename}: {e}")
 
   def get_hw_info(self, context: AppContext):
     filename = context.hw_report_md
@@ -105,8 +107,8 @@ Helpful resources:
       cpus = c.Win32_Processor()
       lines.append("### CPU:\n")
       for cpu in cpus:
-        lines.append(f"- Name: {cpu.Name}")
-        lines.append(f"- Number of Cores: {cpu.NumberOfCores}")
+        lines.append(f"- {_('Name')}: {cpu.Name}")
+        lines.append(f"- {_('Number of Cores')}: {cpu.NumberOfCores}")
 
       # RAM info (in GB)
       system_info = c.Win32_ComputerSystem()[0]
@@ -116,11 +118,11 @@ Helpful resources:
 
       # Drives info
       drives = c.Win32_LogicalDisk(DriveType=3)  # local disks only
-      lines.append("\n### Drives:\n")
+      lines.append(f"\n### {_('Drives')}:\n")
       for drive in drives:
         size_gb = int(drive.Size) / (1024 ** 3) if drive.Size else 0
         free_gb = int(drive.FreeSpace) / (1024 ** 3) if drive.FreeSpace else 0
-        lines.append(f"- {drive.DeviceID} - Size: {size_gb:.2f} GB, Free: {free_gb:.2f} GB")
+        lines.append(f"- {drive.DeviceID} - {_('Size')}: {size_gb:.2f} GB, {_('Free')}: {free_gb:.2f} GB")
 
       # GPU info
       gpus = c.Win32_VideoController()
@@ -131,25 +133,25 @@ Helpful resources:
 
       # Network adapters (physical and enabled)
       net_adapters = [n for n in c.Win32_NetworkAdapter() if n.PhysicalAdapter and n.NetEnabled]
-      lines.append("\n### Network Adapters:\n")
+      lines.append(f"\n### {_('Network Adapters:')}\n")
       for net in net_adapters:
-        lines.append(f"- Name: {net.Name}, Connection ID: {net.NetConnectionID}, Type: {net.AdapterType}")
+        lines.append(f"- {_('Name')}: {net.Name}, {_('Connection ID')}: {net.NetConnectionID}, {_('Type')}: {net.AdapterType}")
 
       # Printers info
       printers = c.Win32_Printer()
-      lines.append("\n### Printers:\n")
+      lines.append(f"\n### {_('Printers')}:\n")
       for printer in printers:
-        lines.append(f"- Name: {printer.Name}, Port: {printer.PortName}")
+        lines.append(f"- {_('Name')}: {printer.Name}, {_('Port')}: {printer.PortName}")
 
       # Scanners
       scanners = [d for d in c.Win32_PnPEntity() if d.Name and "scanner" in d.Name.lower()]
-      lines.append("\n### Scanners:\n")
+      lines.append(f"\n### {_('Scanners')}:\n")
       for device in scanners:
         name = device.Name or ""
         if "scanner" in name.lower() or "imaging" in name.lower():
-          lines.append(f"- Name: {name}")
+          lines.append(f"- {_('Name')}: {name}")
       if not scanners:
-        lines.append(f"- No devices found")
+        lines.append(f"- {_('No devices found')}")
 
     finally:
       pythoncom.CoUninitialize()
@@ -211,7 +213,7 @@ Helpful resources:
     try:
       os.remove(input_file)
     except OSError as e:
-      print(f"Error deleting {input_file}: {e}")
+      print(f"{_('Error deleting')} {input_file}: {e}")
 
   def get_info_thread(self, context: AppContext):
     # PowerShell command
@@ -252,7 +254,7 @@ Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersio
 
   def finish_get_info(self, context: AppContext):
     context.stop_progress()
-    context.set_report_label("Finished gathering software and hardware info")
+    context.set_report_label(_("Finished gathering software and hardware info"))
     context.view_btn.config(state="normal")
     context.report_generated = True
 

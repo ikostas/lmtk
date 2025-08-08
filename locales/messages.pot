@@ -1,0 +1,410 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-08 20:54+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app_context.py:43
+msgid "Total source folder size is: "
+msgstr ""
+
+#: app_context.py:71
+msgid "Quit"
+msgstr ""
+
+#: app_context.py:121 dialog.py:215
+msgid "View report"
+msgstr ""
+
+#: app_context.py:133 dialog.py:295
+msgid "Novice Mode"
+msgstr ""
+
+#: app_context.py:135 dialog.py:296
+msgid "Expert Mode"
+msgstr ""
+
+#: app_context.py:152
+msgid "0. Intro"
+msgstr ""
+
+#: app_context.py:152 app_context.py:154
+msgid "1. Gather Info"
+msgstr ""
+
+#: app_context.py:152 app_context.py:154
+msgid "2. Backup"
+msgstr ""
+
+#: app_context.py:152 app_context.py:154
+msgid "3. Prepare Media"
+msgstr ""
+
+#: backup.py:22
+msgid "No folder selected"
+msgstr ""
+
+#: backup.py:71 dialog.py:122
+msgid "Your current destination folder: "
+msgstr ""
+
+#: backup.py:80
+msgid "Remove"
+msgstr ""
+
+#: backup.py:120
+msgid "OK"
+msgstr ""
+
+#: backup.py:121
+msgid "No source folders selected"
+msgstr ""
+
+#: backup.py:122
+msgid "No destination folder selected"
+msgstr ""
+
+#: backup.py:123
+msgid "Destination is one of the input folders"
+msgstr ""
+
+#: backup.py:124
+msgid "One input folder is a subfolder of another input folder"
+msgstr ""
+
+#: backup.py:125
+msgid "Output is inside one of the input folders (cyclic backup)"
+msgstr ""
+
+#: backup.py:162
+msgid "Skipping"
+msgstr ""
+
+#: backup.py:168
+msgid "Backup complete, see log file for details"
+msgstr ""
+
+#: dialog.py:38 dialog.py:40
+msgid "Let's prepare your installation media"
+msgstr ""
+
+#: dialog.py:45
+msgid ""
+"Here's what you should do next:\n"
+"1. Download linux ISO and media writer\n"
+"2. Launch media writer, write ISO to a USB-stick\n"
+"3. Reboot, enter BIOS/UEFI, set USB-stick as a first boot device and turn "
+"off Secure Boot option\n"
+"\n"
+"I'd recommend the following options for media writers:\n"
+"- balenaEtcher\n"
+"- Rufus\n"
+"- UNetbootin\n"
+"\n"
+"There's a thorough guide for using Rufus with Ubuntu:\n"
+"- Ubuntu Wiki"
+msgstr ""
+
+#: dialog.py:68
+msgid ""
+"You know the drill: write your ISO to a USB stick and boot into a Linux "
+"installation. Here are some media writer options:\n"
+"- balenaEtcher, Rufus, UNetbootin as standard options\n"
+"- Ventroy to experiment with several ISOs\n"
+"\n"
+"Have fun!\n"
+msgstr ""
+
+#: dialog.py:84 dialog.py:176 dialog.py:213
+msgid "Back"
+msgstr ""
+
+#: dialog.py:85 dialog.py:177 dialog.py:214 dialog.py:270
+msgid "Home"
+msgstr ""
+
+#: dialog.py:94 dialog.py:96
+msgid "Let's back up your data"
+msgstr ""
+
+#: dialog.py:101
+msgid ""
+"Some tips:\n"
+"1. Use an external drive with enough free space as the destination.\n"
+"2. You must have read access (as a Windows user) to all folders you want to "
+"back up.\n"
+"3. I've included some default folders, but it's your responsibility to add "
+"all folders that contain valuable data.\n"
+"Bonus tip: All your data in Windows will be erased after installing "
+"Linux. :) So make sure you select all source folders with important data.    "
+msgstr ""
+
+#: dialog.py:109
+msgid ""
+"Choose your folders to back up, and I'll create an archive in destination "
+"folder."
+msgstr ""
+
+#: dialog.py:130
+msgid "Enable compression"
+msgstr ""
+
+#: dialog.py:135
+msgid "Set destination"
+msgstr ""
+
+#: dialog.py:135
+msgid "Here you set the folder, where to put your archive"
+msgstr ""
+
+#: dialog.py:136
+msgid "Add source folder"
+msgstr ""
+
+#: dialog.py:136
+msgid "Here you can add folders to the archive"
+msgstr ""
+
+#: dialog.py:141
+msgid ""
+"Your source folders for backup - press 'Remove' to remove from the list."
+msgstr ""
+
+#: dialog.py:178
+msgid "Perform backup"
+msgstr ""
+
+#: dialog.py:179 dialog.py:216 dialog.py:271
+msgid "Next"
+msgstr ""
+
+#: dialog.py:189
+msgid "Gathering software and hardware info"
+msgstr ""
+
+#: dialog.py:191
+msgid "Let's gather some info about your hardware and software"
+msgstr ""
+
+#: dialog.py:195
+msgid ""
+"This is a very important step: we save information about your hardware "
+"configuration and installed software as HTML and Markdown for future use. "
+"Press 'View report' when it's ready — the report includes instructions and "
+"some useful links as well."
+msgstr ""
+
+#: dialog.py:197
+msgid ""
+"Press 'View report' when it's ready — the report includes the collected "
+"information, instructions, and some useful links. A Markdown version is also "
+"included."
+msgstr ""
+
+#: dialog.py:203
+msgid "Now we are gathering software and hardware info"
+msgstr ""
+
+#: dialog.py:209 report.py:257
+msgid "Finished gathering software and hardware info"
+msgstr ""
+
+#: dialog.py:229 dialog.py:231
+msgid "Are you familiar with Linux?"
+msgstr ""
+
+#: dialog.py:234
+msgid ""
+"So, you're going to install Linux. But are you familiar with Linux?\n"
+"\n"
+"If not, there are some resources to help you master it without too much "
+"risk:\n"
+"- Git for Windows -- includes bash and core command-line utilities, as well "
+"as vim text editor.\n"
+"- VirtualBox -- you'll be able to install and play with any Linux "
+"distribution you like in a sandbox.\n"
+"- LiveCD -- you'll be able to boot into Linux and at least check if your "
+"hardware works.\n"
+"\n"
+"The most common question is 'What distribution should I use?'\n"
+"Well, I'd recommend Ubuntu or Fedora to have a pleasant start.\n"
+"\n"
+"The next question is 'What desktop environment should I use?'\n"
+"I'd recommend Gnome if you have enough memory or XFCE, if you don't. :)\n"
+"\n"
+"Here are some links (all of them include LiveCDs, by the way):\n"
+"- Fedora (Gnome-based)\n"
+"- Fedora XFCE\n"
+"- Ubuntu (Gnome-based)\n"
+"- Ubuntu XFCE\n"
+"\n"
+"When you click 'Next', we'll gather information about your software and "
+"hardware, save it as Markdown (.md) and HTML (.html) reports for future use."
+msgstr ""
+
+#: dialog.py:287
+msgid "LMTK: Welcome to Linux Migration Toolkit!"
+msgstr ""
+
+#: dialog.py:288
+msgid "Welcome to Linux Migration Toolkit! Choose Your Mode"
+msgstr ""
+
+#: dialog.py:291
+msgid ""
+"Welcome to the Linux Migration Toolkit for the desktop! This app gathers "
+"information about your installed programs and hardware for future use, helps "
+"you back up your data, and assists in preparing installation media using "
+"external tools."
+msgstr ""
+
+#: dialog.py:295
+msgid ""
+"For each step you'll have useful guidance and links.\n"
+"Also use it if you use this program for the first time."
+msgstr ""
+
+#: dialog.py:296
+msgid "You know what the program does."
+msgstr ""
+
+#: dialog.py:301
+msgid "PowerShell is installed. We'll need it to do some stuff."
+msgstr ""
+
+#: dialog.py:302
+msgid "PowerShell is not installed. Please install it and restart the app."
+msgstr ""
+
+#: dialog.py:313
+msgid ""
+"Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my "
+"inspiration."
+msgstr ""
+
+#: report.py:31 report.py:53
+msgid "Linux Migration Toolkit Report"
+msgstr ""
+
+#: report.py:56 report.py:82
+msgid "Standard Applications"
+msgstr ""
+
+#: report.py:57 report.py:83
+msgid "Microsoft Store Applications"
+msgstr ""
+
+#: report.py:58 report.py:84
+msgid "Hardware Information"
+msgstr ""
+
+#: report.py:66
+msgid "Generated on"
+msgstr ""
+
+#: report.py:68
+msgid "What do I do with this information?"
+msgstr ""
+
+#: report.py:70
+msgid "You can use this report to"
+msgstr ""
+
+#: report.py:72
+msgid "Check your hardware's compatibility with Linux"
+msgstr ""
+
+#: report.py:73
+msgid "Find Linux alternatives for the Windows programs you currently use"
+msgstr ""
+
+#: report.py:75
+msgid "Helpful resources"
+msgstr ""
+
+#: report.py:78
+msgid "Linux software equivalents to Windows software"
+msgstr ""
+
+#: report.py:80
+msgid "Table of Contents"
+msgstr ""
+
+#: report.py:82
+msgid ""
+"these apps are installed, when you download and installation file and launch "
+"it"
+msgstr ""
+
+#: report.py:83
+msgid "these are the apps, installed from Microsoft Store"
+msgstr ""
+
+#: report.py:84
+msgid "some basic information about your system"
+msgstr ""
+
+#: report.py:97 report.py:216
+msgid "Error deleting"
+msgstr ""
+
+#: report.py:110 report.py:138 report.py:144 report.py:152
+msgid "Name"
+msgstr ""
+
+#: report.py:111
+msgid "Number of Cores"
+msgstr ""
+
+#: report.py:121
+msgid "Drives"
+msgstr ""
+
+#: report.py:125
+msgid "Size"
+msgstr ""
+
+#: report.py:125
+msgid "Free"
+msgstr ""
+
+#: report.py:136
+msgid "Network Adapters:"
+msgstr ""
+
+#: report.py:138
+msgid "Connection ID"
+msgstr ""
+
+#: report.py:138
+msgid "Type"
+msgstr ""
+
+#: report.py:142
+msgid "Printers"
+msgstr ""
+
+#: report.py:144
+msgid "Port"
+msgstr ""
+
+#: report.py:148
+msgid "Scanners"
+msgstr ""
+
+#: report.py:154
+msgid "No devices found"
+msgstr ""
