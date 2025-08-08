@@ -51,7 +51,7 @@ To set up and run LMTK, follow these steps:
 
 5.  **Build the Executable:**
     ```bash
-    pyinstaller --onefile --distpath release/1.0 --name=LMTK dialog.py
+    pyinstaller --onefile --distpath release/1.1 --add-data "locales;locales" --name=LMTK dialog.py
     ```
 
 ## License
