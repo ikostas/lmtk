@@ -17,6 +17,7 @@
 import tkinter as tk # UI
 from tkinter import ttk, font # UI
 import os
+import webbrowser # open links in standard browser
 
 class AppContext():
   def __init__(self):
@@ -48,7 +49,7 @@ class AppContext():
     self.report_generated = False
 
   def set_source_folder_label(self):
-    # change this to human-readable
+    # Convert to human-readable format
     text = "Total source folder size is: " + self.source_size_human
     if getattr(self, "source_size_label", None):
       self.source_size_label.config(text=text)
@@ -179,3 +180,25 @@ class AppContext():
     self.clear_screen()
     self.get_status(status)
     self.gen_header(header)
+
+  def gen_guide(self, guide_content, links):
+    text_frame = ttk.Frame(self.root, height=400)
+    text_frame.pack(padx=self.padx, pady=10, fill="x")
+    text_frame.pack_propagate(False)
+    scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
+    scrollbar.pack(side="right", fill="y")
+    text = tk.Text(text_frame, height=25, width=100, wrap="word", font=(self.font_family, 12), bd=0, bg=self.root.cget("bg"), relief="flat", highlightthickness=0, yscrollcommand=scrollbar.set)
+    text.pack(side="left", fill="both", expand=True)
+    text.insert("1.0", guide_content)
+    scrollbar.config(command=text.yview)
+    text.tag_config("line_spacing", spacing3=8)  # spacing in pixels
+    text.config(state="disabled")
+
+    for tag, start, end, url in links:
+      text.tag_add(tag, start, end)
+      text.tag_config(tag, foreground="blue")
+      text.tag_bind(tag, "<Button-1>", lambda event, url=url: webbrowser.open_new(url))
+
+  def open_report(self):
+    webbrowser.open_new(f"file://{os.path.abspath(self.html_report)}")
+

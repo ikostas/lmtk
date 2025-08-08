@@ -15,18 +15,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import tkinter as tk # UI
-import os # open saved report 
 from tkinter import ttk, font, filedialog # UI
-import webbrowser # open links in standard browser
 import subprocess # execute PowerShell scripts for hardware detection and to list standard folders in home catalog
 import threading # to unfreese the UI
 from report import Report # a class for step 1 -- get system info
 from app_context import AppContext # filenames and other variables
-from backup import Backup # define input/output folders and perform backup
-
-# On the top we have service functions
-# All the other function are steps
-# some steps have novice mode, the mode is in context 
+from backup import Backup # a class for step 2 -- define input/output folders and perform backup
 
 def is_powershell_installed():
   """
@@ -44,9 +38,6 @@ def is_powershell_installed():
   except (FileNotFoundError, subprocess.CalledProcessError):
     return False
 
-def open_report(context: AppContext):
-  webbrowser.open_new(f"file://{os.path.abspath(context.html_report)}")
-
 def media(context: AppContext):
   """
   Step 3. Prepare installation media
@@ -57,6 +48,45 @@ def media(context: AppContext):
     "Let's prepare your installation media"
   )
   context.gen_title(title_data)
+
+  if context.novice_mode:
+    guide_content = """\
+Here's what you should do next:
+1. Download linux ISO and media writer
+2. Launch media writer, write ISO to a USB-stick
+3. Reboot, enter BIOS/UEFI, set USB-stick as a first boot device and turn off Secure Boot option
+
+I'd recommend the following options for media writers:
+- balenaEtcher
+- Rufus
+- UNetbootin
+
+There's a thorough guide for using Rufus with Ubuntu:
+- Ubuntu Wiki\
+"""
+    links = [
+      ("link_etcher", "7.2", "7.14", "https://etcher.balena.io/"),
+      ("link_rufus", "8.2", "8.8", "https://rufus.ie/"),
+      ("link_unetbootin", "9.2", "9.12", "https://unetbootin.github.io/"),
+      ("link_wiki", "12.2", "12.14", "https://ubuntu.com/tutorials/create-a-usb-stick-on-windows"),
+      ]
+
+    context.gen_guide(guide_content, links)
+  else:
+    guide_content = """\
+You know the drill: write your ISO to a USB stick and boot into a Linux installation. Here are some media writer options:
+- balenaEtcher, Rufus, UNetbootin as standard options
+- Ventroy to experiment with several ISOs
+
+Have fun!
+"""
+    links = [
+      ("link_etcher", "2.2", "2.14", "https://etcher.balena.io/"),
+      ("link_rufus", "2.16", "2.21", "https://rufus.ie/"),
+      ("link_unetbootin", "2.23", "2.33", "https://unetbootin.github.io/"),
+      ("link_ventroy", "3.2", "3.9", "https://www.ventoy.net/"),
+      ]
+    context.gen_guide(guide_content, links)
 
   buttons = [
     ("Back", backup),
@@ -76,13 +106,16 @@ def backup(context: AppContext):
   context.gen_title(title_data)
 
   if context.novice_mode:
-    context.gen_label("""
+    context.gen_label("""\
 Some tips:
 1. Use an external drive with enough free space as the destination.
 2. You must have read access (as a Windows user) to all folders you want to back up.
-3. I’ve included some default folders, but it's your responsibility to add all folders that contain valuable data.
-Bonus tip: All your data in Windows will be erased after installing Linux. :) So make sure you select all source folders with important data.
+3. I've included some default folders, but it's your responsibility to add all folders that contain valuable data.
+Bonus tip: All your data in Windows will be erased after installing Linux. :) So make sure you select all source folders with important data.\
     """)
+  else:
+    context.gen_label("Choose your folders to back up, and I'll create an archive in destination folder.")
+
   backup = Backup(context)
 
   # reserve frame for tar progress bar
@@ -113,7 +146,7 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   context.gen_choice(choice_buttons)
 
   # 3. folders from backup
-  context.gen_label("Your source folders for backup -- press 'Remove' to remove from the list.")
+  context.gen_label("Your source folders for backup - press 'Remove' to remove from the list.")
   context.set_source_folder_label()
 
   # Create a scrollable area for the folder list
@@ -182,7 +215,7 @@ def get_info(context: AppContext):
   buttons = [
     ("Back", launch_novice_mode),
     ("Home", home),
-    ("View report", open_report),
+    ("View report", context.open_report),
     ("Next", backup)
   ]
   context.gen_bbuttons(buttons)
@@ -198,10 +231,6 @@ def launch_novice_mode(context: AppContext):
     "Are you familiar with Linux?"
   )
   context.gen_title(title_data)
-  text_frame = ttk.Frame(context.root)
-  text_frame.pack(padx=context.padx, pady=20, fill="both", expand=True)
-  scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
-  scrollbar.pack(side="right", fill="y")
   guide_content = """\
 So, you're going to install Linux. But are you familiar with Linux?
 
@@ -210,7 +239,7 @@ If not, there are some resources to help you master it without too much risk:
 - VirtualBox -- you'll be able to install and play any Linux distribution you like in a sandbox.
 - LiveCD -- you'll be able to boot into Linux and at least check if your hardware works.
 
-The most common question you get , is 'What distribution should I use?'
+The most common question you get is 'What distribution should I use?'
 Well, I recommend Ubuntu or Fedora to have a pleasant start.
 
 The next question is 'What desktop environment should I use?'
@@ -222,15 +251,8 @@ Here are some links (all of them are LiveCDs, by the way):
 - Ubuntu (Gnome-based)
 - Ubuntu XFCE
 
-When you click 'Next', we'll gather information about your software and hardware, save it as Markdown (.md) and HTML (.html) reports for future use.
+When you click 'Next', we'll gather information about your software and hardware, save it as Markdown (.md) and HTML (.html) reports for future use.\
 """
-  text = tk.Text(text_frame, height=25, width=100, wrap="word", font=(context.font_family, 12), bd=0, bg=context.root.cget("bg"), relief="flat", highlightthickness=0, yscrollcommand=scrollbar.set)
-  text.pack(side="left", fill="both", expand=True)
-  text.insert("1.0", guide_content)
-  scrollbar.config(command=text.yview)
-  text.tag_config("line_spacing", spacing3=8)  # spacing in pixels
-  # text.tag_add("line_spacing", "1.0", "end")
-  text.config(state="disabled")
 
   links = [
     ("link_gitForWindows", "4.2", "4.17", "https://git-scm.com/downloads/win"),
@@ -241,12 +263,7 @@ When you click 'Next', we'll gather information about your software and hardware
     ("link_ubuntu_xfce", "18.2", "18.13", "https://xubuntu.org/download/"),
     ]
 
-  for tag, start, end, url in links:
-    text.tag_add(tag, start, end)
-    text.tag_config(tag, foreground="blue")
-    text.tag_bind(tag, "<Button-1>", lambda event, url=url: webbrowser.open_new(url))
-
-  # text.config(state=tk.DISABLED)
+  context.gen_guide(guide_content, links)
 
   # buttons
   buttons = [
