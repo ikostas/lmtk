@@ -1,23 +1,14 @@
-# LMTK: Linux Migration Toolkit
-# Copyright (C) 2025 Konstantin Ovchinnikov <k@kovchinnikov.info>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# LMTK creates report about hardware and software in windows, backs up data and displays info about creating installation media
+# Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info
+# This file is part of LMTK, licensed under the GNU GPLv3 or later.
+# See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
 import tkinter as tk # UI
 from tkinter import ttk, font, filedialog # UI
 import subprocess # execute PowerShell scripts for hardware detection and to list standard folders in home catalog
 import threading # to unfreese the UI
+import os
+import webbrowser # open links in standard browser
 from report import Report # a class for step 1 -- get system info
 from app_context import AppContext # filenames and other variables
 from backup import Backup # a class for step 2 -- define input/output folders and perform backup
@@ -220,11 +211,14 @@ def get_info(context: AppContext):
   buttons = [
     ("Back", launch_novice_mode),
     ("Home", home),
-    ("View report", context.open_report),
+    ("View report", open_report),
     ("Next", backup)
   ]
   context.gen_bbuttons(buttons)
   context.view_btn.config(state=state)
+
+def open_report(context):
+  webbrowser.open_new(f"file://{os.path.abspath(context.html_report)}")
 
 def launch_novice_mode(context: AppContext):
   """

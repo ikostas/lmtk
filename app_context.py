@@ -1,18 +1,7 @@
-# LMTK: Linux Migration Toolkit
-# Copyright (C) 2025 Konstantin Ovchinnikov <k@kovchinnikov.info>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# LMTK creates report about hardware and software in windows, backs up data and displays info about creating installation media
+# Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info
+# This file is part of LMTK, licensed under the GNU GPLv3 or later.
+# See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
 import tkinter as tk # UI
 from tkinter import ttk, font # UI
@@ -126,11 +115,7 @@ class AppContext():
     bb_frame = ttk.Frame(self.root)
     bb_frame.pack(pady=10)
     for idx, (label, func) in enumerate(buttons):
-      if getattr(func, "__self__", None) is self:
-        cmd = lambda f=func: f()
-      else:
-        cmd = lambda f=func: f(self)
-      btn = ttk.Button(bb_frame, text=label, width=30, command=cmd)
+      btn = ttk.Button(bb_frame, text=label, width=30, command=lambda f=func: f(self))
       btn.grid(row=0, column=idx, padx=10)
       if label == "View report":
         self.view_btn = btn
@@ -202,7 +187,4 @@ class AppContext():
       text.tag_add(tag, start, end)
       text.tag_config(tag, foreground="blue")
       text.tag_bind(tag, "<Button-1>", lambda event, url=url: webbrowser.open_new(url))
-
-  def open_report(self):
-    webbrowser.open_new(f"file://{os.path.abspath(self.html_report)}")
 

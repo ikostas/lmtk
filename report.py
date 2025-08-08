@@ -1,18 +1,7 @@
-# LMTK: Linux Migration Toolkit
-# Copyright (C) 2025 Konstantin Ovchinnikov <k@kovchinnikov.info>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# LMTK creates report about hardware and software in windows, backs up data and displays info about creating installation media
+# Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info
+# This file is part of LMTK, licensed under the GNU GPLv3 or later.
+# See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
 import os # remove old files
 from tkinter import ttk
