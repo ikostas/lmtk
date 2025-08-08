@@ -199,6 +199,11 @@ def get_info(context: AppContext):
     "Let's gather some info about your hardware and software"
   )
   context.gen_title(title_data)
+  if context.novice_mode:
+    context.gen_label("This is a very important step: we save information about your hardware configuration and installed software as HTML and Markdown for future use. Press 'View report' when it's ready — the report includes instructions and some useful links as well.")
+  else:
+    context.gen_label("Press 'View report' when it's ready — the report includes the collected information, instructions, and some useful links. A Markdown version is also included.")
+
   context.progress_frame = ttk.Frame(context.root)
   context.progress_frame.pack(pady=0)
 
@@ -236,16 +241,16 @@ So, you're going to install Linux. But are you familiar with Linux?
 
 If not, there are some resources to help you master it without too much risk:
 - Git for Windows -- includes bash and core command-line utilities, as well as vim text editor.
-- VirtualBox -- you'll be able to install and play any Linux distribution you like in a sandbox.
+- VirtualBox -- you'll be able to install and play with any Linux distribution you like in a sandbox.
 - LiveCD -- you'll be able to boot into Linux and at least check if your hardware works.
 
-The most common question you get is 'What distribution should I use?'
-Well, I recommend Ubuntu or Fedora to have a pleasant start.
+The most common question is 'What distribution should I use?'
+Well, I'd recommend Ubuntu or Fedora to have a pleasant start.
 
 The next question is 'What desktop environment should I use?'
-I recommend Gnome if you have enough memory or XFCE, if you don't. :)
+I'd recommend Gnome if you have enough memory or XFCE, if you don't. :)
 
-Here are some links (all of them are LiveCDs, by the way):
+Here are some links (all of them include LiveCDs, by the way):
 - Fedora (Gnome-based)
 - Fedora XFCE
 - Ubuntu (Gnome-based)
