@@ -1,3 +1,19 @@
+# LMTK: Linux Migration Toolkit
+# Copyright (C) 2025 Konstantin Ovchinnikov <k@kovchinnikov.info>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import tkinter as tk # UI
 import os # open saved report 
 from tkinter import ttk, font, filedialog # UI
@@ -35,10 +51,13 @@ def media(context: AppContext):
   """
   Step 3. Prepare installation media
   """
-  context.root.title("LMTK: Let's prepare your installation media")
-  context.clear_screen()
-  context.get_status(3)
-  context.gen_header("Let's prepare your installation media")
+  title_data = (
+    "LMTK: Let's prepare your installation media",
+    3,
+    "Let's prepare your installation media"
+  )
+  context.gen_title(title_data)
+
   buttons = [
     ("Back", backup),
     ("Home", home),
@@ -49,10 +68,13 @@ def backup(context: AppContext):
   """
   Step 2. Backup screen: create tar or tar.bz2 archive
   """
-  context.root.title("LMTK: Let's back up your data")
-  context.clear_screen()
-  context.get_status(2)
-  context.gen_header("Let's back up your data")
+  title_data = (
+    "LMTK: Let's back up your data",
+    2,
+    "Let's back up your data"
+  )
+  context.gen_title(title_data)
+
   if context.novice_mode:
     context.gen_label("""
 Some tips:
@@ -138,9 +160,12 @@ def get_info(context: AppContext):
   Step 1. Create report re hardware and installed software
   """
   # Add some text here for novice: what we do, what to do next -- add argument to a function
-  context.root.title("Gathering software and hardware info")
-  context.clear_screen()
-  context.get_status(1)
+  title_data = (
+    "Gathering software and hardware info",
+    1,
+    "Let's gather some info about your hardware and software"
+  )
+  context.gen_title(title_data)
   context.progress_frame = ttk.Frame(context.root)
   context.progress_frame.pack(pady=0)
 
@@ -167,13 +192,14 @@ def launch_novice_mode(context: AppContext):
   """
   Step 0, for novice mode only -- display some info with links
   """
-  context.root.title("LMTK: Are you familiar with Linux?")
-  context.clear_screen()
-  context.gen_header("Are you familiar with Linux?")
-  context.get_status(0)
+  title_data = (
+    "LMTK: Are you familiar with Linux?",
+    0,
+    "Are you familiar with Linux?"
+  )
+  context.gen_title(title_data)
   text_frame = ttk.Frame(context.root)
-  text_frame.pack(padx=30, pady=20, fill="x")
-  text_frame.configure(height=200)  
+  text_frame.pack(padx=context.padx, pady=20, fill="both", expand=True)
   scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
   scrollbar.pack(side="right", fill="y")
   guide_content = """\
