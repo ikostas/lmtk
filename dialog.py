@@ -31,35 +31,13 @@ def is_powershell_installed():
 def open_report(context: AppContext):
   webbrowser.open_new(f"file://{os.path.abspath(context.html_report)}")
 
-def get_status(step_index, context: AppContext):
-  """
-  Display current step 
-  """
-  normal_font = font.Font(family="Helvetica", size=11)
-  bold_font = font.Font(family="Helvetica", size=11, weight="bold")
-  if context.novice_mode:
-    steps = ["0. Intro", "1. Gather Info", "2. Backup", "3. Prepare Media"]
-  else:
-    steps = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
-
-  status_frame = tk.Frame(context.root)
-  status_frame.pack(pady=0, anchor="n")
-  for i, step in enumerate(steps):
-    lbl_font = bold_font if i == step_index else normal_font
-    label = ttk.Label(status_frame, text=step, font=lbl_font)
-    label.pack(side="left")
-
-    if i < len(steps) - 1:
-      sep = ttk.Label(status_frame, text=" > ", font=normal_font)
-      sep.pack(side="left")
-
 def media(context: AppContext):
   """
   Step 3. Prepare installation media
   """
   context.root.title("LMTK: Let's prepare your installation media")
   context.clear_screen()
-  get_status(3, context)
+  context.get_status(3)
   context.gen_header("Let's prepare your installation media")
   buttons = [
     ("Back", backup),
@@ -73,7 +51,7 @@ def backup(context: AppContext):
   """
   context.root.title("LMTK: Let's back up your data")
   context.clear_screen()
-  get_status(2, context)
+  context.get_status(2)
   context.gen_header("Let's back up your data")
   if context.novice_mode:
     context.gen_label("""
@@ -137,7 +115,7 @@ def get_info(context: AppContext):
   # Add some text here for novice: what we do, what to do next -- add argument to a function
   context.root.title("Gathering software and hardware info")
   context.clear_screen()
-  get_status(1, context)
+  context.get_status(1)
   context.progress_frame = ttk.Frame(context.root)
   context.progress_frame.pack(pady=0)
 
@@ -167,7 +145,7 @@ def launch_novice_mode(context: AppContext):
   context.root.title("LMTK: Are you familiar with Linux?")
   context.clear_screen()
   context.gen_header("Are you familiar with Linux?")
-  get_status(0, context)
+  context.get_status(0)
   text_frame = ttk.Frame(context.root)
   text_frame.pack(padx=20, pady=20, fill="x")
   text_frame.configure(height=200)  

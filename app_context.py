@@ -126,3 +126,25 @@ class AppContext():
     label= ttk.Label(self.root, text=label, wraplength=600)
     label.pack(pady=0, padx=30, anchor="center")
 
+  def get_status(self, step_index):
+    """
+    Display current step 
+    """
+    normal_font = font.Font(family="Helvetica", size=11)
+    bold_font = font.Font(family="Helvetica", size=11, weight="bold")
+    if self.novice_mode:
+      steps = ["0. Intro", "1. Gather Info", "2. Backup", "3. Prepare Media"]
+    else:
+      steps = ["1. Gather Info", "2. Backup", "3. Prepare Media"]
+
+    status_frame = tk.Frame(self.root)
+    status_frame.pack(pady=0, anchor="n")
+    for i, step in enumerate(steps):
+      lbl_font = bold_font if i == step_index else normal_font
+      label = ttk.Label(status_frame, text=step, font=lbl_font)
+      label.pack(side="left")
+
+      if i < len(steps) - 1:
+        sep = ttk.Label(status_frame, text=" > ", font=normal_font)
+        sep.pack(side="left")
+
