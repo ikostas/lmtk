@@ -1,7 +1,7 @@
 
 # Linux Migration Toolkit Report
 
-*Generated on 2025-08-08 12:58:16*
+*Generated on 2025-08-08 13:24:37*
 
 ## What do I do with this information?
 
@@ -175,7 +175,7 @@ Helpful resources:
 
 ### Drives:
 
-- C: - Size: 79.26 GB, Free: 41.51 GB
+- C: - Size: 79.26 GB, Free: 41.49 GB
 
 ### GPU:
 

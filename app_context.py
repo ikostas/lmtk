@@ -126,7 +126,11 @@ class AppContext():
     bb_frame = ttk.Frame(self.root)
     bb_frame.pack(pady=10)
     for idx, (label, func) in enumerate(buttons):
-      btn = ttk.Button(bb_frame, text=label, width=30, command=lambda f=func: f(self))
+      if getattr(func, "__self__", None) is self:
+        cmd = lambda f=func: f()
+      else:
+        cmd = lambda f=func: f(self)
+      btn = ttk.Button(bb_frame, text=label, width=30, command=cmd)
       btn.grid(row=0, column=idx, padx=10)
       if label == "View report":
         self.view_btn = btn

@@ -1,5 +1,5 @@
 # project-specific
-swhw-report.*
+**/swhw-report.*
 
 # === Python ===
 __pycache__/
