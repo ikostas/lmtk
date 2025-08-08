@@ -1,14 +1,13 @@
 # Linux Migration Toolkit (LMTK)
 
-LMTK is a desktop application designed to assist users in migrating from Windows to Linux. It streamlines the process by providing tools to gather system information, back up important data, and prepare Linux installation media.
+LMTK is a desktop app that helps users migrate from Windows to Linux. It simplifies the process with tools for system info gathering, data backup, and preparing Linux installation media.
 
 ## Features
 
-- **System Information Gathering:** Automatically collects software and hardware details, generating comprehensive Markdown (.md) and HTML (.html) reports for future reference.
-- **Data Backup:** Facilitates backing up user data into compressed tar or tar.bz2 archives. Users can select specific source folders and define a destination for the backup.
-- **Installation Media Preparation:** Guides users through the process of creating bootable Linux installation media, providing direct links to recommended media writing tools and relevant tutorials.
-- **Dual Operating Modes:** Offers both a 'Novice Mode' with guided steps and helpful links for new Linux users, and an 'Expert Mode' for experienced users who prefer a more direct workflow.
-- **PowerShell Integration:** Utilizes PowerShell for specific Windows-related operations, such as hardware detection and listing standard home directories.
+- System Info Reports: Collects hardware and software details, saves them as Markdown and HTML.
+- Data Backup: Archives selected folders into .tar or .tar.bz2 files.
+- Installation Media Prep: Helps create bootable Linux USBs with links to writing tools and tutorials.
+- Novice & Expert Modes: Choose between a guided or streamlined workflow.
 
 ## Installation
 
