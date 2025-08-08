@@ -12,7 +12,7 @@ LMTK is a desktop application designed to assist users in migrating from Windows
 
 ## Installation
 
-Everything is packed into one executable in release/latest. You'll need PowerShell v.5.11 or later, which is normally installed.
+Everything is packed into one executable, no installation is required. You'll need PowerShell v.5.11 or later, which is normally installed.
 
 - [Download the latest release](https://github.com/ikostas/lmtk/releases/download/v1.0/LMTK.exe)
 
