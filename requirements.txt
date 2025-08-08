@@ -1,0 +1,3 @@
+Markdown==3.8.2
+pywin32==311
+WMI==1.5.1
