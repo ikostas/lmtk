@@ -165,7 +165,7 @@ class Backup():
 
   def after_backup(self, context: AppContext):
     context.stop_progress()
-    finished_label = ttk.Label(context.progress_frame, text=_("Backup complete, see log file for details"), font=("Helvetica", 12))
+    finished_label = ttk.Label(context.progress_frame, text=_("Backup complete, see log file for details"), font=(context.font_family, 12))
     finished_label.pack()
 
   def validate_backup_paths(self, context):

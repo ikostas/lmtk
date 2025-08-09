@@ -36,6 +36,10 @@ class AppContext():
     self.root.configure(bg=self.style.lookup('TFrame', 'background'))
     self.root.geometry("900x800")
     self.root.resizable(True, True)
+    self.root.lift()
+    self.root.attributes('-topmost', True)
+    self.root.focus_force()     
+    self.root.after(100, lambda: self.root.attributes('-topmost', False))
     self.report_generated = False
 
   def set_source_folder_label(self):
@@ -68,8 +72,12 @@ class AppContext():
     del self.progress
 
   def quit_button(self):
-    quit_button = ttk.Button(self.root, text=_("Quit"), command=self.root.destroy)
+    quit_button = ttk.Button(self.root, text=_("Quit"), command=self.quit_program)
     quit_button.pack(pady=10)
+  
+  def quit_program(self):
+    self.root.quit()
+    self.root.destroy()
 
   @property
   def standard_apps_txt(self):

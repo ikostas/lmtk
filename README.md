@@ -11,7 +11,7 @@ LMTK is a desktop app that helps users migrate from Windows to Linux. It simplif
 
 ## Installation
 
-Everything is packed into one executable, no installation is required. You'll need PowerShell v.5.11 or later, which is normally installed.
+Unpack the .zip file and launch executable, no installation is required. You'll need PowerShell v.5.11 or later, which is normally installed.
 
 - [Download the latest release](https://github.com/ikostas/lmtk/releases/latest)
 
@@ -49,9 +49,16 @@ To set up and run LMTK, follow these steps:
     python dialog.py
     ```
 
-5.  **Build the Executable:**
+5.  **Update the Translations:**
     ```bash
-    pyinstaller --onefile --distpath release/1.1 --add-data "locales;locales" --name=LMTK dialog.py
+    xgettext -o locales/messages.pot *.py
+    msgmerge --update locales/de/LC_MESSAGES/messages.po locales/messages.pot
+    msgfmt locales/de/LC_MESSAGES/messages.po -o locales/de/LC_MESSAGES/messages.mo
+    ```
+
+6.  **Build the Executable:**
+    ```bash
+    pyinstaller dialog.spec --distpath release/1.1
     ```
 
 ## License

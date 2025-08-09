@@ -4,7 +4,7 @@
 # See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
 import tkinter as tk # UI
-from tkinter import ttk, font, filedialog # UI
+from tkinter import ttk, font, filedialog, messagebox # UI
 import subprocess # execute PowerShell scripts for hardware detection and to list standard folders in home catalog
 import threading # to unfreese the UI
 import os
@@ -30,6 +30,23 @@ def is_powershell_installed():
   except (FileNotFoundError, subprocess.CalledProcessError):
     return False
 
+def about():
+  root = tk.Tk()
+  root.withdraw()
+
+  messagebox.showinfo(
+    _("About"),
+    _("""Linux Migration Toolkit
+Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/.
+
+Source code: https://github.com/ikostas/lmtk
+""")
+  )
+
 def media(context: AppContext):
   """
   Step 3. Prepare installation media
@@ -42,8 +59,7 @@ def media(context: AppContext):
   context.gen_title(title_data)
 
   if context.novice_mode:
-    guide_content = _("""\
-Here's what you should do next:
+    guide_content = _("""Here's what you should do next:
 1. Download linux ISO and media writer
 2. Launch media writer, write ISO to a USB-stick
 3. Reboot, enter BIOS/UEFI, set USB-stick as a first boot device and turn off Secure Boot option
@@ -65,8 +81,7 @@ There's a thorough guide for using Rufus with Ubuntu:
 
     context.gen_guide(guide_content, links)
   else:
-    guide_content = _("""\
-You know the drill: write your ISO to a USB stick and boot into a Linux installation. Here are some media writer options:
+    guide_content = _("""You know the drill: write your ISO to a USB stick and boot into a Linux installation. Here are some media writer options:
 - balenaEtcher, Rufus, UNetbootin as standard options
 - Ventroy to experiment with several ISOs
 
@@ -98,13 +113,12 @@ def backup(context: AppContext):
   context.gen_title(title_data)
 
   if context.novice_mode:
-    context.gen_label(_("""\
-Some tips:
+    context.gen_label(_("""Some tips:
 1. Use an external drive with enough free space as the destination.
 2. You must have read access (as a Windows user) to all folders you want to back up.
 3. I've included some default folders, but it's your responsibility to add all folders that contain valuable data.
 Bonus tip: All your data in Windows will be erased after installing Linux. :) So make sure you select all source folders with important data.\
-    """))
+"""))
   else:
     context.gen_label(_("Choose your folders to back up, and I'll create an archive in destination folder."))
 
@@ -119,7 +133,7 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   dest_frame.pack(pady=(10, 0), padx=context.padx, anchor="w")
 
   # 1. destination label
-  context.destination_label = ttk.Label(dest_frame, text=_("Your current destination folder: ") + backup.destination_folder, font=("Helvetica", 11))
+  context.destination_label = ttk.Label(dest_frame, text=_("Your current destination folder: ") + backup.destination_folder, font=(context.font_family, 11))
   context.destination_label.pack(pady=0, anchor="w")
   check_var = tk.BooleanVar(value=context.compress)
 
@@ -231,8 +245,7 @@ def launch_novice_mode(context: AppContext):
     _("Are you familiar with Linux?")
   )
   context.gen_title(title_data)
-  guide_content = _("""\
-So, you're going to install Linux. But are you familiar with Linux?
+  guide_content = _("""So, you're going to install Linux. But are you familiar with Linux?
 
 If not, there are some resources to help you master it without too much risk:
 - Git for Windows -- includes bash and core command-line utilities, as well as vim text editor.
@@ -307,7 +320,9 @@ def home(context: AppContext):
     context.gen_label(text_ps_not_installed)
     context.btn_novice_mode.config(state="disabled")
     context.btn_expert_mode.config(state="disabled")
-
+  context.gen_label(_("This project is licensed under the GNU General Public License v3.0 or later. Press 'About' for more details."))
+  about_button = ttk.Button(context.root, text=_("About"), command=about)
+  about_button.pack(pady=0)
   context.quit_button()
 
   context.gen_label(_("Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my inspiration."))

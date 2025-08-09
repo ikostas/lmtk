@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-08 20:54+0200\n"
+"POT-Creation-Date: 2025-08-09 12:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,39 +17,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: app_context.py:43
+#: app_context.py:47
 msgid "Total source folder size is: "
 msgstr ""
 
-#: app_context.py:71
+#: app_context.py:75
 msgid "Quit"
 msgstr ""
 
-#: app_context.py:121 dialog.py:215
+#: app_context.py:129 dialog.py:229
 msgid "View report"
 msgstr ""
 
-#: app_context.py:133 dialog.py:295
+#: app_context.py:141 dialog.py:308
 msgid "Novice Mode"
 msgstr ""
 
-#: app_context.py:135 dialog.py:296
+#: app_context.py:143 dialog.py:309
 msgid "Expert Mode"
 msgstr ""
 
-#: app_context.py:152
+#: app_context.py:160
 msgid "0. Intro"
 msgstr ""
 
-#: app_context.py:152 app_context.py:154
+#: app_context.py:160 app_context.py:162
 msgid "1. Gather Info"
 msgstr ""
 
-#: app_context.py:152 app_context.py:154
+#: app_context.py:160 app_context.py:162
 msgid "2. Backup"
 msgstr ""
 
-#: app_context.py:152 app_context.py:154
+#: app_context.py:160 app_context.py:162
 msgid "3. Prepare Media"
 msgstr ""
 
@@ -57,7 +57,7 @@ msgstr ""
 msgid "No folder selected"
 msgstr ""
 
-#: backup.py:71 dialog.py:122
+#: backup.py:71 dialog.py:136
 msgid "Your current destination folder: "
 msgstr ""
 
@@ -97,11 +97,31 @@ msgstr ""
 msgid "Backup complete, see log file for details"
 msgstr ""
 
-#: dialog.py:38 dialog.py:40
+#: dialog.py:38 dialog.py:324
+msgid "About"
+msgstr ""
+
+#: dialog.py:39
+msgid ""
+"Linux Migration Toolkit\n"
+"Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info\n"
+"\n"
+"This program is free software: you can redistribute it and/or modify it "
+"under the terms of the GNU General Public License as published by the Free "
+"Software Foundation, either version 3 of the License, or (at your option) "
+"any later version.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with "
+"this program. If not, see https://www.gnu.org/licenses/.\n"
+"\n"
+"Source code: https://github.com/ikostas/lmtk\n"
+msgstr ""
+
+#: dialog.py:55 dialog.py:57
 msgid "Let's prepare your installation media"
 msgstr ""
 
-#: dialog.py:45
+#: dialog.py:62
 msgid ""
 "Here's what you should do next:\n"
 "1. Download linux ISO and media writer\n"
@@ -118,7 +138,7 @@ msgid ""
 "- Ubuntu Wiki"
 msgstr ""
 
-#: dialog.py:68
+#: dialog.py:84
 msgid ""
 "You know the drill: write your ISO to a USB stick and boot into a Linux "
 "installation. Here are some media writer options:\n"
@@ -128,19 +148,19 @@ msgid ""
 "Have fun!\n"
 msgstr ""
 
-#: dialog.py:84 dialog.py:176 dialog.py:213
+#: dialog.py:99 dialog.py:190 dialog.py:227
 msgid "Back"
 msgstr ""
 
-#: dialog.py:85 dialog.py:177 dialog.py:214 dialog.py:270
+#: dialog.py:100 dialog.py:191 dialog.py:228 dialog.py:283
 msgid "Home"
 msgstr ""
 
-#: dialog.py:94 dialog.py:96
+#: dialog.py:109 dialog.py:111
 msgid "Let's back up your data"
 msgstr ""
 
-#: dialog.py:101
+#: dialog.py:116
 msgid ""
 "Some tips:\n"
 "1. Use an external drive with enough free space as the destination.\n"
@@ -149,57 +169,57 @@ msgid ""
 "3. I've included some default folders, but it's your responsibility to add "
 "all folders that contain valuable data.\n"
 "Bonus tip: All your data in Windows will be erased after installing "
-"Linux. :) So make sure you select all source folders with important data.    "
+"Linux. :) So make sure you select all source folders with important data."
 msgstr ""
 
-#: dialog.py:109
+#: dialog.py:123
 msgid ""
 "Choose your folders to back up, and I'll create an archive in destination "
 "folder."
 msgstr ""
 
-#: dialog.py:130
+#: dialog.py:144
 msgid "Enable compression"
 msgstr ""
 
-#: dialog.py:135
+#: dialog.py:149
 msgid "Set destination"
 msgstr ""
 
-#: dialog.py:135
+#: dialog.py:149
 msgid "Here you set the folder, where to put your archive"
 msgstr ""
 
-#: dialog.py:136
+#: dialog.py:150
 msgid "Add source folder"
 msgstr ""
 
-#: dialog.py:136
+#: dialog.py:150
 msgid "Here you can add folders to the archive"
 msgstr ""
 
-#: dialog.py:141
+#: dialog.py:155
 msgid ""
 "Your source folders for backup - press 'Remove' to remove from the list."
 msgstr ""
 
-#: dialog.py:178
+#: dialog.py:192
 msgid "Perform backup"
 msgstr ""
 
-#: dialog.py:179 dialog.py:216 dialog.py:271
+#: dialog.py:193 dialog.py:230 dialog.py:284
 msgid "Next"
 msgstr ""
 
-#: dialog.py:189
+#: dialog.py:203
 msgid "Gathering software and hardware info"
 msgstr ""
 
-#: dialog.py:191
+#: dialog.py:205
 msgid "Let's gather some info about your hardware and software"
 msgstr ""
 
-#: dialog.py:195
+#: dialog.py:209
 msgid ""
 "This is a very important step: we save information about your hardware "
 "configuration and installed software as HTML and Markdown for future use. "
@@ -207,26 +227,26 @@ msgid ""
 "some useful links as well."
 msgstr ""
 
-#: dialog.py:197
+#: dialog.py:211
 msgid ""
 "Press 'View report' when it's ready — the report includes the collected "
 "information, instructions, and some useful links. A Markdown version is also "
 "included."
 msgstr ""
 
-#: dialog.py:203
+#: dialog.py:217
 msgid "Now we are gathering software and hardware info"
 msgstr ""
 
-#: dialog.py:209 report.py:257
+#: dialog.py:223 report.py:257
 msgid "Finished gathering software and hardware info"
 msgstr ""
 
-#: dialog.py:229 dialog.py:231
+#: dialog.py:243 dialog.py:245
 msgid "Are you familiar with Linux?"
 msgstr ""
 
-#: dialog.py:234
+#: dialog.py:248
 msgid ""
 "So, you're going to install Linux. But are you familiar with Linux?\n"
 "\n"
@@ -255,15 +275,15 @@ msgid ""
 "hardware, save it as Markdown (.md) and HTML (.html) reports for future use."
 msgstr ""
 
-#: dialog.py:287
+#: dialog.py:300
 msgid "LMTK: Welcome to Linux Migration Toolkit!"
 msgstr ""
 
-#: dialog.py:288
+#: dialog.py:301
 msgid "Welcome to Linux Migration Toolkit! Choose Your Mode"
 msgstr ""
 
-#: dialog.py:291
+#: dialog.py:304
 msgid ""
 "Welcome to the Linux Migration Toolkit for the desktop! This app gathers "
 "information about your installed programs and hardware for future use, helps "
@@ -271,25 +291,31 @@ msgid ""
 "external tools."
 msgstr ""
 
-#: dialog.py:295
+#: dialog.py:308
 msgid ""
 "For each step you'll have useful guidance and links.\n"
 "Also use it if you use this program for the first time."
 msgstr ""
 
-#: dialog.py:296
+#: dialog.py:309
 msgid "You know what the program does."
 msgstr ""
 
-#: dialog.py:301
+#: dialog.py:314
 msgid "PowerShell is installed. We'll need it to do some stuff."
 msgstr ""
 
-#: dialog.py:302
+#: dialog.py:315
 msgid "PowerShell is not installed. Please install it and restart the app."
 msgstr ""
 
-#: dialog.py:313
+#: dialog.py:323
+msgid ""
+"This project is licensed under the GNU General Public License v3.0 or later. "
+"Press 'About' for more details."
+msgstr ""
+
+#: dialog.py:328
 msgid ""
 "Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my "
 "inspiration."

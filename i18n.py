@@ -18,7 +18,8 @@ locales_path = resource_path("locales")
 lang, encoding = locale.getdefaultlocale()
 
 try:
-    translation = gettext.translation('messages', localedir=locales_path, languages=[lang])
-    _ = translation.gettext
+  translation = gettext.translation('messages', localedir=locales_path, languages=[lang])
+  _ = translation.gettext
 except FileNotFoundError:
-    _ = gettext.gettext
+  _ = gettext.gettext
+
