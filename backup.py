@@ -3,27 +3,33 @@
 # This file is part of LMTK, licensed under the GNU GPLv3 or later.
 # See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
-from app_context import AppContext
+'''
+Module: backup.py
+Description: Works with files, creates tar/tar.bz2 archive
+'''
+
 import subprocess # execute PowerShell script for user folder detection
-import tkinter as tk # UI
-from tkinter import ttk, filedialog 
+from tkinter import ttk, filedialog
 import os
 import threading
 import tarfile
 import datetime
 import logging
+from app_context import AppContext
 from i18n import _
 
 class Backup():
+  """Creates backup in tar/tar.bz2 format"""
   def __init__(self, context: AppContext):
-    self.folder_list_frame = ttk.Frame(context.root)
-    self.folder_list_frame.pack(padx=10, pady=10)
-    if context.backup_output == None:
-      self.destination_folder = _("No folder selected") 
+    context.scrollable_frame = ttk.Frame(context.root)
+    context.scrollable_frame.pack(padx=10, pady=10)
+    if context.backup_output is None:
+      self.destination_folder = _("No folder selected")
     else:
       self.destination_folder = context.backup_output
 
   def get_default_folders(self):
+    """Create a list of default folders to backup by running a PowerShell script"""
     ps_script = r'''
     $folders = @(
       [Environment]::GetFolderPath("MyDocuments")
@@ -45,6 +51,7 @@ class Backup():
     return result.stdout.strip().splitlines()
 
   def add_folder(self, context: AppContext):
+    """Add a source folder for a backup - open a file dialog"""
     folder = filedialog.askdirectory()
     folder = os.path.normpath(folder)
     if folder and folder != "." and not any(f["path"] == folder for f in context.backup_input):
@@ -52,6 +59,7 @@ class Backup():
       self.display_folder(context.backup_input[-1], context)
 
   def add_folder_backend(self, folder, context: AppContext):
+    """Add a source folder for a backup - add a folder to an array, recalculate total size"""
     folder_size = self.get_folder_size(folder)
     folder_info = {
       "path": folder,
@@ -64,6 +72,7 @@ class Backup():
     context.set_source_folder_label()
 
   def set_destination(self, context: AppContext):
+    """Set destination folder for a backup"""
     folder = filedialog.askdirectory()
     folder = os.path.normpath(folder)
     if folder and folder != "." and not any(f["path"] == folder for f in context.backup_input):
@@ -71,7 +80,8 @@ class Backup():
       context.destination_label.config(text=_("Your current destination folder: ") + folder)
 
   def display_folder(self, folder, context: AppContext):
-    frame = ttk.Frame(self.folder_list_frame)
+    """Display added source folder in the UI"""
+    frame = ttk.Frame(context.scrollable_frame)
     frame.pack(pady=2,padx=context.padx, anchor="w", fill="x")
     frame.columnconfigure(0, weight=1)
     label = ttk.Label(frame, text=f"{folder['path']} ({folder['size_human']})", anchor="w", justify="left")
@@ -82,16 +92,18 @@ class Backup():
     remove_btn.grid(row=0, column=1, sticky="e")
 
   def remove_folder(self, folder, frame, context: AppContext):
+    """Remove source folder from the UI and array"""
     if folder in context.backup_input:
-      context.source_size -= folder['size_bytes'] 
+      context.source_size -= folder['size_bytes']
       context.source_size_human = self.get_size_hr(context.source_size)
       context.backup_input.remove(folder)
       context.set_source_folder_label()
       frame.destroy()
 
   def get_folder_size(self, path):
+    """Calculate total source folders size"""
     total = 0
-    for dirpath, dirnames, filenames in os.walk(path):
+    for dirpath, _, filenames in os.walk(path):
       for f in filenames:
         try:
           fp = os.path.join(dirpath, f)
@@ -101,6 +113,7 @@ class Backup():
     return total
 
   def get_size_hr(self, total):
+    """Calculate folder size in human-readable format"""
     for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
       if total < 1024:
         return f"{total:.1f} {unit}"
@@ -108,6 +121,7 @@ class Backup():
     return f"{total:.1f} PB"
 
   def start_backup(self, context: AppContext):
+    """Perform checks on source and destination folders and call actual archive method in a thread"""
     if getattr(context, "error_label", None):
       context.error_label.destroy()
       context.error_label = None
@@ -128,10 +142,11 @@ class Backup():
       if getattr(context, "error_label", None):
         context.error_label.config(text=text)
       else:
-        context.error_label = ttk.Label(context.progress_frame, text=text, font=(context.font_family, 12)) 
+        context.error_label = ttk.Label(context.progress_frame, text=text, font=(context.font_family, 12))
         context.error_label.pack()
 
   def create_tar_archive(self, context: AppContext):
+    """Create a tar/tar.bz2 archive"""
     if context.compress:
       mode = "w:bz2"
       extension = "tar.bz2"
@@ -159,16 +174,18 @@ class Backup():
         try:
           tar.add(base_path, arcname=arcname)
         except (PermissionError, FileNotFoundError) as e:
-          logging.error(f"{_("Skipping")} {base_path}: {e}")
+          logging.error("%s %s: %s", _("Skipping"), base_path, e)
 
     context.root.after(0, lambda: self.after_backup(context))
 
   def after_backup(self, context: AppContext):
+    """Stop the progress and add a message in the UI that backup is complete"""
     context.stop_progress()
     finished_label = ttk.Label(context.progress_frame, text=_("Backup complete, see log file for details"), font=(context.font_family, 12))
     finished_label.pack()
 
   def validate_backup_paths(self, context):
+    """Check for source/destination errors"""
     input_paths = [(folder["path"]) for folder in context.backup_input]
     output_path = context.backup_output if context.backup_output else None
     # 1. No source folders selected
@@ -192,6 +209,6 @@ class Backup():
     # 5. Output is inside one of the input folders (cyclic backup)
     for source in input_paths:
       if output_path.startswith(source + os.sep):
-        return 5 
+        return 5
 
     return 0

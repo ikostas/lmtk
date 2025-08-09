@@ -3,8 +3,13 @@
 # This file is part of LMTK, licensed under the GNU GPLv3 or later.
 # See the LICENSE file or <https://www.gnu.org/licenses/> for details.
 
+'''
+Module: dialog.py
+Description: Draws the screens of the UI and calls classes to do the job
+'''
+
 import tkinter as tk # UI
-from tkinter import ttk, font, filedialog, messagebox # UI
+from tkinter import ttk, messagebox # UI
 import subprocess # execute PowerShell scripts for hardware detection and to list standard folders in home catalog
 import threading # to unfreese the UI
 import os
@@ -31,6 +36,7 @@ def is_powershell_installed():
     return False
 
 def about():
+  """About message box"""
   root = tk.Tk()
   root.withdraw()
 
@@ -48,9 +54,7 @@ Source code: https://github.com/ikostas/lmtk
   )
 
 def media(context: AppContext):
-  """
-  Step 3. Prepare installation media
-  """
+  """ Step 3. Prepare installation media """
   title_data = (
     f"LMTK: {_('Let\'s prepare your installation media')}",
     3,
@@ -96,15 +100,13 @@ Have fun!
     context.gen_guide(guide_content, links)
 
   buttons = [
-    (_("Back"), backup),
+    (_("Back"), backup_window),
     (_("Home"), home),
   ]
   context.gen_bbuttons(buttons)
 
-def backup(context: AppContext):
-  """
-  Step 2. Backup screen: create tar or tar.bz2 archive
-  """
+def backup_window(context: AppContext):
+  """ Step 2. Backup screen: create tar or tar.bz2 archive """
   title_data = (
     f"LMTK: {_('Let\'s back up your data')}",
     2,
@@ -137,8 +139,8 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   context.destination_label.pack(pady=0, anchor="w")
   check_var = tk.BooleanVar(value=context.compress)
 
-  def update_context(*args):
-      context.compress = check_var.get()
+  def update_context(*_):
+    context.compress = check_var.get()
 
   check_var.trace_add("write", update_context)
   checkbox = ttk.Checkbutton(dest_frame, text=_("Enable compression"), variable=check_var)
@@ -154,36 +156,14 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   # 3. folders from backup
   context.gen_label(_("Your source folders for backup - press 'Remove' to remove from the list."))
   context.set_source_folder_label()
-
-  # Create a scrollable area for the folder list
-  folder_list_container = ttk.Frame(context.root)
-  folder_list_container.pack(fill='x', expand=True, padx=context.padx)
-  bg_color = context.style.lookup('TFrame', 'background')
-  folder_canvas = tk.Canvas(folder_list_container, width=600, height=200, borderwidth=0, highlightthickness=0, bg=bg_color)
-  folder_scrollbar = ttk.Scrollbar(folder_list_container, orient="vertical", command=folder_canvas.yview)
-  scrollable_frame = ttk.Frame(folder_canvas)
-
-  scrollable_frame.bind(
-      "<Configure>",
-      lambda e: folder_canvas.configure(
-          scrollregion=folder_canvas.bbox("all")
-      )
-  )
-
-  folder_canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-  folder_canvas.configure(yscrollcommand=folder_scrollbar.set)
-
-  folder_canvas.pack(side="left", fill="both", expand=True)
-  folder_scrollbar.pack(side="right", fill="y")
-
-  backup.folder_list_frame = scrollable_frame # Assign the scrollable frame
+  context.gen_canvas()
 
   if context.backup_input == []:
     for i in backup.get_default_folders():
       backup.add_folder_backend(i, context)
   if context.backup_input:
-   for folder in context.backup_input:
-     backup.display_folder(folder, context)
+    for folder in context.backup_input:
+      backup.display_folder(folder, context)
 
   # 4. bottom buttons
   buttons = [
@@ -195,9 +175,7 @@ Bonus tip: All your data in Windows will be erased after installing Linux. :) So
   context.gen_bbuttons(buttons)
 
 def get_info(context: AppContext):
-  """
-  Step 1. Create report re hardware and installed software
-  """
+  """ Step 1. Create report re hardware and installed software """
   # Add some text here for novice: what we do, what to do next -- add argument to a function
   title_data = (
     _("Gathering software and hardware info"),
@@ -227,18 +205,17 @@ def get_info(context: AppContext):
     (_("Back"), launch_novice_mode),
     (_("Home"), home),
     (_("View report"), open_report),
-    (_("Next"), backup)
+    (_("Next"), backup_window)
   ]
   context.gen_bbuttons(buttons)
   context.view_btn.config(state=state)
 
 def open_report(context):
+  """Open software and hardware html report in default browser"""
   webbrowser.open_new(f"file://{os.path.abspath(context.html_report)}")
 
 def launch_novice_mode(context: AppContext):
-  """
-  Step 0, for novice mode only -- display some info with links
-  """
+  """ Step 0, for novice mode only -- display some info with links """
   title_data = (
     f"LMTK: {_('Are you familiar with Linux?')}",
     0,
@@ -270,9 +247,9 @@ When you click 'Next', we'll gather information about your software and hardware
   links = [
     ("link_gitForWindows", "4.2", "4.17", "https://git-scm.com/downloads/win"),
     ("link_virtualbox", "5.2", "5.12", "https://www.virtualbox.org/wiki/Downloads"),
-    ("link_fedora_gnome", "15.2", "15.22", "https://fedoraproject.org/workstation/download"),
+    ("link_fedora_gnome", "15.2", "15.8", "https://fedoraproject.org/workstation/download"),
     ("link_fedora_xfce", "16.2", "16.13", "https://fedoraproject.org/spins/xfce/download"),
-    ("link_ubuntu_gnome", "17.2", "17.23", "https://ubuntu.com/download/desktop"),
+    ("link_ubuntu_gnome", "17.2", "17.8", "https://ubuntu.com/download/desktop"),
     ("link_ubuntu_xfce", "18.2", "18.13", "https://xubuntu.org/download/"),
     ]
 
@@ -286,16 +263,12 @@ When you click 'Next', we'll gather information about your software and hardware
   context.gen_bbuttons(buttons)
 
 def launch_expert_mode(context: AppContext):
-  """
-  Set context variable and start with step 1.
-  """
+  """ Set context variable and start with step 1. """
   context.novice_mode = False
   get_info(context)
 
 def home(context: AppContext):
-  """
-  Display the first screen -- choose the mode
-  """
+  """ Display the first screen -- choose the mode """
   context.clear_screen()
   context.root.title(_("LMTK: Welcome to Linux Migration Toolkit!"))
   context.gen_header(_("Welcome to Linux Migration Toolkit! Choose Your Mode"))
@@ -327,6 +300,6 @@ def home(context: AppContext):
 
   context.gen_label(_("Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my inspiration."))
 
-context = AppContext()
-home(context)
-context.run()
+app_context = AppContext()
+home(app_context)
+app_context.run()

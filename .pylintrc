@@ -1,0 +1,22 @@
+[MASTER]
+# Load any additional plugins here, if needed
+# load-plugins=
+
+[FORMAT]
+# Indentation string — two spaces, no quotes!
+indent-string='  '
+
+# Maximum number of characters on a single line.
+max-line-length=120
+
+# Expected indentation level
+indent-after-paren=4
+
+[MESSAGES CONTROL]
+# Disable some noisy messages if you want
+# disable=C0114, C0115, C0116  ; missing module/class/function docstring
+disable=C0301
+
+[REPORTS]
+# Disable the report at the end
+# reports=no

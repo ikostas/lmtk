@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-09 12:47+0200\n"
+"POT-Creation-Date: 2025-08-09 19:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,91 +17,91 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: app_context.py:47
+#: app_context.py:59
 msgid "Total source folder size is: "
 msgstr ""
 
-#: app_context.py:75
+#: app_context.py:92
 msgid "Quit"
 msgstr ""
 
-#: app_context.py:129 dialog.py:229
+#: app_context.py:154 dialog.py:207
 msgid "View report"
 msgstr ""
 
-#: app_context.py:141 dialog.py:308
+#: app_context.py:167 dialog.py:281
 msgid "Novice Mode"
 msgstr ""
 
-#: app_context.py:143 dialog.py:309
+#: app_context.py:169 dialog.py:282
 msgid "Expert Mode"
 msgstr ""
 
-#: app_context.py:160
+#: app_context.py:185
 msgid "0. Intro"
 msgstr ""
 
-#: app_context.py:160 app_context.py:162
+#: app_context.py:185 app_context.py:187
 msgid "1. Gather Info"
 msgstr ""
 
-#: app_context.py:160 app_context.py:162
+#: app_context.py:185 app_context.py:187
 msgid "2. Backup"
 msgstr ""
 
-#: app_context.py:160 app_context.py:162
+#: app_context.py:185 app_context.py:187
 msgid "3. Prepare Media"
 msgstr ""
 
-#: backup.py:22
+#: backup.py:27
 msgid "No folder selected"
 msgstr ""
 
-#: backup.py:71 dialog.py:136
+#: backup.py:80 dialog.py:138
 msgid "Your current destination folder: "
 msgstr ""
 
-#: backup.py:80
+#: backup.py:90
 msgid "Remove"
 msgstr ""
 
-#: backup.py:120
+#: backup.py:134
 msgid "OK"
 msgstr ""
 
-#: backup.py:121
+#: backup.py:135
 msgid "No source folders selected"
 msgstr ""
 
-#: backup.py:122
+#: backup.py:136
 msgid "No destination folder selected"
 msgstr ""
 
-#: backup.py:123
+#: backup.py:137
 msgid "Destination is one of the input folders"
 msgstr ""
 
-#: backup.py:124
+#: backup.py:138
 msgid "One input folder is a subfolder of another input folder"
 msgstr ""
 
-#: backup.py:125
+#: backup.py:139
 msgid "Output is inside one of the input folders (cyclic backup)"
 msgstr ""
 
-#: backup.py:162
+#: backup.py:177
 msgid "Skipping"
 msgstr ""
 
-#: backup.py:168
+#: backup.py:184
 msgid "Backup complete, see log file for details"
 msgstr ""
 
-#: dialog.py:38 dialog.py:324
+#: dialog.py:44 dialog.py:297
 msgid "About"
 msgstr ""
 
-#: dialog.py:39
+#: dialog.py:45
 msgid ""
 "Linux Migration Toolkit\n"
 "Copyright (C) 2025 Konstantin Ovchinnikov k@kovchinnikov.info\n"
@@ -117,11 +117,11 @@ msgid ""
 "Source code: https://github.com/ikostas/lmtk\n"
 msgstr ""
 
-#: dialog.py:55 dialog.py:57
+#: dialog.py:59 dialog.py:61
 msgid "Let's prepare your installation media"
 msgstr ""
 
-#: dialog.py:62
+#: dialog.py:66
 msgid ""
 "Here's what you should do next:\n"
 "1. Download linux ISO and media writer\n"
@@ -138,7 +138,7 @@ msgid ""
 "- Ubuntu Wiki"
 msgstr ""
 
-#: dialog.py:84
+#: dialog.py:88
 msgid ""
 "You know the drill: write your ISO to a USB stick and boot into a Linux "
 "installation. Here are some media writer options:\n"
@@ -148,19 +148,19 @@ msgid ""
 "Have fun!\n"
 msgstr ""
 
-#: dialog.py:99 dialog.py:190 dialog.py:227
+#: dialog.py:103 dialog.py:170 dialog.py:205
 msgid "Back"
 msgstr ""
 
-#: dialog.py:100 dialog.py:191 dialog.py:228 dialog.py:283
+#: dialog.py:104 dialog.py:171 dialog.py:206 dialog.py:260
 msgid "Home"
 msgstr ""
 
-#: dialog.py:109 dialog.py:111
+#: dialog.py:111 dialog.py:113
 msgid "Let's back up your data"
 msgstr ""
 
-#: dialog.py:116
+#: dialog.py:118
 msgid ""
 "Some tips:\n"
 "1. Use an external drive with enough free space as the destination.\n"
@@ -172,54 +172,54 @@ msgid ""
 "Linux. :) So make sure you select all source folders with important data."
 msgstr ""
 
-#: dialog.py:123
+#: dialog.py:125
 msgid ""
 "Choose your folders to back up, and I'll create an archive in destination "
 "folder."
 msgstr ""
 
-#: dialog.py:144
+#: dialog.py:146
 msgid "Enable compression"
 msgstr ""
 
-#: dialog.py:149
+#: dialog.py:151
 msgid "Set destination"
 msgstr ""
 
-#: dialog.py:149
+#: dialog.py:151
 msgid "Here you set the folder, where to put your archive"
 msgstr ""
 
-#: dialog.py:150
+#: dialog.py:152
 msgid "Add source folder"
 msgstr ""
 
-#: dialog.py:150
+#: dialog.py:152
 msgid "Here you can add folders to the archive"
 msgstr ""
 
-#: dialog.py:155
+#: dialog.py:157
 msgid ""
 "Your source folders for backup - press 'Remove' to remove from the list."
 msgstr ""
 
-#: dialog.py:192
+#: dialog.py:172
 msgid "Perform backup"
 msgstr ""
 
-#: dialog.py:193 dialog.py:230 dialog.py:284
+#: dialog.py:173 dialog.py:208 dialog.py:261
 msgid "Next"
 msgstr ""
 
-#: dialog.py:203
+#: dialog.py:181
 msgid "Gathering software and hardware info"
 msgstr ""
 
-#: dialog.py:205
+#: dialog.py:183
 msgid "Let's gather some info about your hardware and software"
 msgstr ""
 
-#: dialog.py:209
+#: dialog.py:187
 msgid ""
 "This is a very important step: we save information about your hardware "
 "configuration and installed software as HTML and Markdown for future use. "
@@ -227,26 +227,26 @@ msgid ""
 "some useful links as well."
 msgstr ""
 
-#: dialog.py:211
+#: dialog.py:189
 msgid ""
 "Press 'View report' when it's ready — the report includes the collected "
 "information, instructions, and some useful links. A Markdown version is also "
 "included."
 msgstr ""
 
-#: dialog.py:217
+#: dialog.py:195
 msgid "Now we are gathering software and hardware info"
 msgstr ""
 
-#: dialog.py:223 report.py:257
+#: dialog.py:201 report.py:271
 msgid "Finished gathering software and hardware info"
 msgstr ""
 
-#: dialog.py:243 dialog.py:245
+#: dialog.py:220 dialog.py:222
 msgid "Are you familiar with Linux?"
 msgstr ""
 
-#: dialog.py:248
+#: dialog.py:225
 msgid ""
 "So, you're going to install Linux. But are you familiar with Linux?\n"
 "\n"
@@ -275,15 +275,15 @@ msgid ""
 "hardware, save it as Markdown (.md) and HTML (.html) reports for future use."
 msgstr ""
 
-#: dialog.py:300
+#: dialog.py:273
 msgid "LMTK: Welcome to Linux Migration Toolkit!"
 msgstr ""
 
-#: dialog.py:301
+#: dialog.py:274
 msgid "Welcome to Linux Migration Toolkit! Choose Your Mode"
 msgstr ""
 
-#: dialog.py:304
+#: dialog.py:277
 msgid ""
 "Welcome to the Linux Migration Toolkit for the desktop! This app gathers "
 "information about your installed programs and hardware for future use, helps "
@@ -291,146 +291,146 @@ msgid ""
 "external tools."
 msgstr ""
 
-#: dialog.py:308
+#: dialog.py:281
 msgid ""
 "For each step you'll have useful guidance and links.\n"
 "Also use it if you use this program for the first time."
 msgstr ""
 
-#: dialog.py:309
+#: dialog.py:282
 msgid "You know what the program does."
 msgstr ""
 
-#: dialog.py:314
+#: dialog.py:287
 msgid "PowerShell is installed. We'll need it to do some stuff."
 msgstr ""
 
-#: dialog.py:315
+#: dialog.py:288
 msgid "PowerShell is not installed. Please install it and restart the app."
 msgstr ""
 
-#: dialog.py:323
+#: dialog.py:296
 msgid ""
 "This project is licensed under the GNU General Public License v3.0 or later. "
 "Press 'About' for more details."
 msgstr ""
 
-#: dialog.py:328
+#: dialog.py:301
 msgid ""
 "Thanks to all the guys and gals in reddit.com/r/linuxsucks/, you're my "
 "inspiration."
 msgstr ""
 
-#: report.py:31 report.py:53
+#: report.py:37 report.py:60
 msgid "Linux Migration Toolkit Report"
 msgstr ""
 
-#: report.py:56 report.py:82
+#: report.py:63 report.py:89
 msgid "Standard Applications"
 msgstr ""
 
-#: report.py:57 report.py:83
+#: report.py:64 report.py:90
 msgid "Microsoft Store Applications"
 msgstr ""
 
-#: report.py:58 report.py:84
+#: report.py:65 report.py:91
 msgid "Hardware Information"
 msgstr ""
 
-#: report.py:66
+#: report.py:73
 msgid "Generated on"
 msgstr ""
 
-#: report.py:68
+#: report.py:75
 msgid "What do I do with this information?"
 msgstr ""
 
-#: report.py:70
+#: report.py:77
 msgid "You can use this report to"
 msgstr ""
 
-#: report.py:72
+#: report.py:79
 msgid "Check your hardware's compatibility with Linux"
 msgstr ""
 
-#: report.py:73
+#: report.py:80
 msgid "Find Linux alternatives for the Windows programs you currently use"
 msgstr ""
 
-#: report.py:75
+#: report.py:82
 msgid "Helpful resources"
 msgstr ""
 
-#: report.py:78
+#: report.py:85
 msgid "Linux software equivalents to Windows software"
 msgstr ""
 
-#: report.py:80
+#: report.py:87
 msgid "Table of Contents"
 msgstr ""
 
-#: report.py:82
+#: report.py:89
 msgid ""
 "these apps are installed, when you download and installation file and launch "
 "it"
 msgstr ""
 
-#: report.py:83
+#: report.py:90
 msgid "these are the apps, installed from Microsoft Store"
 msgstr ""
 
-#: report.py:84
+#: report.py:91
 msgid "some basic information about your system"
 msgstr ""
 
-#: report.py:97 report.py:216
+#: report.py:104 report.py:226
 msgid "Error deleting"
 msgstr ""
 
-#: report.py:110 report.py:138 report.py:144 report.py:152
+#: report.py:121 report.py:146 report.py:153 report.py:162
 msgid "Name"
 msgstr ""
 
-#: report.py:111
+#: report.py:121
 msgid "Number of Cores"
 msgstr ""
 
-#: report.py:121
+#: report.py:132
 msgid "Drives"
 msgstr ""
 
-#: report.py:125
+#: report.py:133
 msgid "Size"
 msgstr ""
 
-#: report.py:125
+#: report.py:133
 msgid "Free"
 msgstr ""
 
-#: report.py:136
-msgid "Network Adapters:"
+#: report.py:145
+msgid "Network Adapters"
 msgstr ""
 
-#: report.py:138
+#: report.py:146
 msgid "Connection ID"
 msgstr ""
 
-#: report.py:138
+#: report.py:146
 msgid "Type"
 msgstr ""
 
-#: report.py:142
+#: report.py:152
 msgid "Printers"
 msgstr ""
 
-#: report.py:144
+#: report.py:153
 msgid "Port"
 msgstr ""
 
-#: report.py:148
+#: report.py:162 report.py:164
 msgid "Scanners"
 msgstr ""
 
-#: report.py:154
+#: report.py:164
 msgid "No devices found"
 msgstr ""
