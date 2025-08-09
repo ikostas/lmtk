@@ -19,7 +19,6 @@ venv/
 .ipynb_checkpoints/
 
 # PyInstaller
-*.spec
 dist/
 build/
 
