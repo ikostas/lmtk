@@ -32,7 +32,7 @@ class AppContext():
     self.report_label = None
     self.error_label = None
     self.novice_mode = True
-    self.font_family = "Segoe UI" # A standard, modern Windows font.
+    self.font_family = "Segoe UI"
     self.padx = 30
     self.root = tk.Tk()
     self.style = ttk.Style(self.root)
