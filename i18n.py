@@ -9,7 +9,6 @@ Description: Define local and load localization, define localization object used
 '''
 
 import gettext
-import locale
 import os
 import sys
 import ctypes
@@ -22,13 +21,13 @@ def resource_path(relative_path):
 
 def get_display_language():
   """Get the Windows display/UI language (first in preferred list)"""
-  GetUserPreferredUILanguages = ctypes.windll.kernel32.GetUserPreferredUILanguages
-  MUI_LANGUAGE_NAME = 0x8
+  preferred_lang = ctypes.windll.kernel32.GetUserPreferredUILanguages
+  lang_name = 0x8
   num_languages = ctypes.c_ulong()
   buffer_size = ctypes.c_ulong()
-  GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, ctypes.byref(num_languages), None, ctypes.byref(buffer_size))
+  preferred_lang(lang_name, ctypes.byref(num_languages), None, ctypes.byref(buffer_size))
   buffer = ctypes.create_unicode_buffer(buffer_size.value)
-  GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, ctypes.byref(num_languages), buffer, ctypes.byref(buffer_size))
+  preferred_lang(lang_name, ctypes.byref(num_languages), buffer, ctypes.byref(buffer_size))
   return buffer.value.split("-")[0]
 
 locales_path = resource_path("locales")

@@ -16,13 +16,15 @@ from i18n import _
 class AppContext():
   """ Handles context variables and UI functions """
   def __init__(self):
-    self._standard_apps_txt = "installed_standard_apps.txt"
-    self._standard_apps_md = "cleaned_standard_apps.md"
-    self._store_apps_txt = "installed_store_apps.txt"
-    self._store_apps_md = "cleaned_store_apps.md"
-    self._hw_report_md = "hardware_info.md"
-    self._md_report = "swhw_report.md"
-    self._html_report = "swhw_report.html"
+    self._ui_defaults = {
+      "font_family": "Segoe UI",
+      "geometry": "900x800",
+      "theme": "vista",
+      "padx": 30
+    }
+    for key, value in self._ui_defaults.items():
+      setattr(self, key, value)
+
     self.backup_input = [] # folders to backup
     self.backup_output = None # where to put a backup
     self.source_size = 0
@@ -32,14 +34,12 @@ class AppContext():
     self.report_label = None
     self.error_label = None
     self.novice_mode = True
-    self.font_family = "Segoe UI"
-    self.padx = 30
     self.root = tk.Tk()
     self.style = ttk.Style(self.root)
-    self.style.theme_use('vista')
+    self.style.theme_use(self.theme)
     self.style.configure('TCheckbutton', font=(self.font_family, 11))
     self.root.configure(bg=self.style.lookup('TFrame', 'background'))
-    self.root.geometry("900x800")
+    self.root.geometry(self.geometry)
     self.root.resizable(True, True)
     self.root.lift()
     self.root.attributes('-topmost', True)
@@ -97,41 +97,6 @@ class AppContext():
     self.root.quit()
     self.root.destroy()
 
-  @property
-  def standard_apps_txt(self):
-    """A filename for standard apps list"""
-    return self._standard_apps_txt
-
-  @property
-  def standard_apps_md(self):
-    """A filename for Markdown report - standard apps"""
-    return self._standard_apps_md
-
-  @property
-  def store_apps_txt(self):
-    """A filename for Microsoft store apps list"""
-    return self._store_apps_txt
-
-  @property
-  def store_apps_md(self):
-    """A filename for Markdown report - Microsoft store apps"""
-    return self._store_apps_md
-
-  @property
-  def hw_report_md(self):
-    """A filename for Markdown report - hardware"""
-    return self._hw_report_md
-
-  @property
-  def md_report(self):
-    """A filename for Markdown report - combined"""
-    return self._md_report
-
-  @property
-  def html_report(self):
-    """A filename for html report - combined"""
-    return self._html_report
-
   def clear_screen(self):
     """Clear root window and empty some labels used"""
     for widget in self.root.winfo_children():
@@ -149,7 +114,7 @@ class AppContext():
     bb_frame = ttk.Frame(self.root)
     bb_frame.pack(pady=10)
     for idx, (label, func) in enumerate(buttons):
-      btn = ttk.Button(bb_frame, text=label, width=30, command=lambda f=func: f(self))
+      btn = ttk.Button(bb_frame, text=label, width=30, command=func)
       btn.grid(row=0, column=idx, padx=10)
       if label == _("View report"):
         self.view_btn = btn
@@ -160,7 +125,7 @@ class AppContext():
     choice_frame = ttk.Frame(self.root)
     choice_frame.pack(pady=0, padx=self.padx)
     for idx, (label, func, description) in enumerate(buttons):
-      btn = ttk.Button(choice_frame, text=label, width=20, command=lambda f=func: f(self))
+      btn = ttk.Button(choice_frame, text=label, width=20, command=func)
       btn.grid(row=idx, column=0, padx=10, pady=5)
       desc = ttk.Label(choice_frame, text=description, justify="left", wraplength=400)
       desc.grid(row=idx, column=1, padx=10, sticky="w")
